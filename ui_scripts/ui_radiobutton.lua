@@ -75,16 +75,16 @@ function RadioButton:draw()
 		if self.checked == true then
 			l_gfx.setColor(self.colorHighlight)
 		else
-			l_gfx.setColor(self.dFillColor)
+			l_gfx.setColor(self.colorFill)
 		end
 		if self.active == false then
 			l_gfx.setColor(self.colorDisabledFill)
 		end
 		l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
 		if self.active == true then
-			l_gfx.setColor(self.dFontColor)
+			l_gfx.setColor(self.colorFont)
 		else
-			l_gfx.setColor(self.dFillColor)
+			l_gfx.setColor(self.colorFill)
 		end
 		l_gfx.printf(self.caption,self.x,self.y+(self.h/2-7),self.w,"center")
 	else
@@ -95,9 +95,9 @@ function RadioButton:draw()
 			l_gfx.circle("fill",self.x+8,self.y+8,6,12)
 		end
 		if self.active == true then
-			l_gfx.setColor(self.dFontColor)
+			l_gfx.setColor(self.colorFont)
 		else
-			l_gfx.setColor(self.dFillColor)
+			l_gfx.setColor(self.colorFill)
 		end
 		l_gfx.print(self.caption,self.x+20,self.y+2)
 	end
@@ -128,7 +128,7 @@ function RadioColorPicker:draw()
 	if self.checked == true then
 		l_gfx.setColor(self.colorHighlight)
 	else
-		l_gfx.setColor(self.dFillColor)
+		l_gfx.setColor(self.colorFill)
 	end
 	if self.active == false then
 		l_gfx.setColor(self.colorDisabledFill)

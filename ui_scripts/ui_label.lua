@@ -21,7 +21,7 @@ setmetatable(Label,{__index = UIElement})
 
 function Label:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.dFontColor)
+	l_gfx.setColor(self.colorFont)
 	if self.wrap == true then
 		l_gfx.printf(self.caption,self.x,self.y,self.w,self.align)
 	else
@@ -50,3 +50,38 @@ function RefreshingLabel:new(name)
 	return self
 end
 setmetatable(RefreshingLabel,{__index = Label})
+
+TextBox = {}
+TextBox.__index = TextBox
+TextBox.name = "TextBox"
+TextBox.ident = "ui_textbox"
+TextBox.showBorder = true
+TextBox.fill = true
+function TextBox:new(name)
+	local self = setmetatable({},TextBox)
+	self.name = name or self.name
+	return self
+end
+setmetatable(TextBox,{__index = Label})
+
+function TextBox:alignBox()
+	local w,l =  l_gfx.getFont():getWrap(self.caption,self.w)
+	self.h = l_gfx.getFont():getHeight()*l
+end
+
+
+
+function TextBox:draw()
+	local cr,cg,cb,ca = love.graphics.getColor()
+	if self.showBorder == true then
+		l_gfx.setColor(self.colorLine)
+		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
+	end
+	if self.fill == true then
+		l_gfx.setColor(self.colorFill)
+		l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
+	end
+	l_gfx.setColor(self.colorFont)
+	l_gfx.printf(self.caption,self.x,self.y,self.w,self.align)
+	l_gfx.setColor(cr,cg,cb,ca)
+end

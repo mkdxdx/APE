@@ -1358,7 +1358,7 @@ function fillPage(page)
 				code = code.."emitter = love.graphics.newParticleSystem(tex,"..em:getBufferSize()..")\n"
 				code = code.."emitter:setDirection("..em:getDirection()..")\n"
 				local as,asx,asy = em:getAreaSpread()
-				code = code.."emitter:setAreaSpread("..as..","..asx..","..asy..")\n"
+				code = code.."emitter:setAreaSpread(\""..as.."\","..asx..","..asy..")\n"
 				code = code.."emitter:setEmissionRate("..em:getEmissionRate()..")\n"
 				code = code.."emitter:setEmitterLifetime("..em:getEmitterLifetime()..")\n"
 				local elaxmin,elaymin,elaxmax,elaymax = em:getLinearAcceleration()
@@ -1380,6 +1380,8 @@ function fillPage(page)
 				code = code.."emitter:setLinearDamping("..pldmin..","..pldmax..")\n"
 				code = code.."emitter:setSpread("..em:getSpread()..")\n"
 				code = code.."emitter:setRelativeRotation("..tostring(em:hasRelativeRotation())..")\n"
+				local ox,oy = em:getOffset()
+				code = code.."emitter:setOffset("..ox..","..oy..")\n"
 				local sizes = ""
 				for i=1,spsrange.value do
 					sizes = sizes..rbszgr[i].caption
@@ -1401,7 +1403,7 @@ function fillPage(page)
 					local qlist = ""
 					local qvarlist = ""
 					for i=1,#lbqlist.items do 
-						qlist = qlist.."local q"..i.." = love.graphics.newQuad("..lbqlist:getItem(i)..","..texw..","..texh..")\n"
+						qlist = qlist.."local q"..i.." = love.graphics.newQuad("..lbqlist.items[i]..","..texw..","..texh..")\n"
 						qvarlist = qvarlist.."q"..i
 						if i<#lbqlist.items then qvarlist = qvarlist.."," end
 					end
@@ -1434,5 +1436,6 @@ function fillPage(page)
 		lbbmode:hide()
 	
 	gbmisc:setPosition(252,love.graphics.getHeight()-36)
+	
 	
 end

@@ -11,8 +11,9 @@ Button = {}
 Button.__index = Button
 Button.ident = "ui_button"
 Button.caption = "Button"
-Button.colorHighlight = {128,128,128,128}
+Button.colorHighlight = {160,160,160,128}
 Button.name = "Button"
+Button.showBorder = false
 function Button:new(name)
 	local self = {}
 	setmetatable(self,Button)
@@ -27,13 +28,15 @@ function Button:draw()
 	if self:isMouseOver() == true and self.active == true then
 		l_gfx.setColor(self.colorHighlight)
 	else
-		l_gfx.setColor(self.dFillColor)
+		l_gfx.setColor(self.colorFill)
 	end
 	l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
-	l_gfx.setColor(self.dLineColor)
-	l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
+	if self.showBorder == true then
+		l_gfx.setColor(self.colorLine)
+		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
+	end
 	if self.active == true then
-		l_gfx.setColor(self.dFontColor)
+		l_gfx.setColor(self.colorFont)
 	else 
 		l_gfx.setColor(self.colorDisabledFill)
 	end

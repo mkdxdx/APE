@@ -1,60 +1,3 @@
---[[
-	Simple UI library for LOVE2D by cval
-	
-	Made specifically for particle editor, but can be used anywhere you can put it.
-	This library was written for LOVE2D version 0.9.2 (the one with quads in particle system, hooray!)
-	
-	USAGE EXAMPLE: 
-	
-	-- include library into your project
-	require("ui") 
-	
-	-- preferrable if it's additional files are in the same directory with ui.lua script
-	-- ui_scrdir variable is for convenience
-	
-	-- create ui manager (preferrably in love.load())
-	uimanagername = UIManager:new()
-	
-	-- after this you should also include:
-	-- uimanagername:draw() into love.draw() function
-	-- uimanagername:update(dt) into love.update(dt) function
-	-- uimanagername:mousemoved(x,y) into love.mousemoved(x,y) function
-	-- uimanagername:mousepressed(x,y,b) into love.mousepressed(x,y,b) function
-	-- uimanagername:mousereleased(x,y,b) into love.mousereleased(x,y,b) function
-	-- uimanagername:keypressed(key,isrepeat) into love.keypressed(key,isrepeat) function
-	-- uimanagername:keyreleased(key) into love.keyreleased(key) function
-	
-	-- now after you defined your UIManager, you can add your ui elements into it, e.g.
-	-- syntax as follows: 
-	-- uimanagername:addItem(Component:new("ComponentName"))
-	-- addItem function also returns pointer to that element, so you can put it into variable:
-	-- local component = uimanagername:addItem(Component:new("ComponentName"))
-	
-	-- adding a button with ui name "Button1" (for referencing it in uimanager), set its caption to "New button!" and set its position to 4,4
-	
-	button = uimanagername:addItem(Button:new("Button1"))
-	button.caption = "New button!"
-	button:setPosition(4,4)
-	
-	-- after this you can define its action if you click on it, for example make it change its caption on left mouse button press:
-	
-	function button:click(b)
-		if b == "l"
-			button.caption = "Button is clicked!"
-		end
-	end
-	
-	-- adding a groupbox container, and then add another button into it:
-	
-	local groupbox = uimanagername:addItem(GroupBox:new("GroupBox"))
-	local gbbutton = groupbox:addItem(Button:new("GBButton"))
-	gbbuton.caption = "Button in a groupbox!"
-	
-	-- note that not every element with addItem method is able to receive another element (Listboxes usually receive strings)
-
-]]
-
-
 require(ui_scrdir.."ui_element")
 require(ui_scrdir.."ui_uielement")
 require(ui_scrdir.."ui_button")
@@ -72,6 +15,10 @@ require(ui_scrdir.."ui_listbox")
 require(ui_scrdir.."ui_image")
 require(ui_scrdir.."ui_collection")
 require(ui_scrdir.."ui_timer")
+require(ui_scrdir.."ui_playercontroller")
+require(ui_scrdir.."ui_textfield")
+require(ui_scrdir.."ui_pointplotter")
+require(ui_scrdir.."ui_canvas")
 
 local l_gfx = love.graphics
 
@@ -105,18 +52,21 @@ function UIManager:addItem(item)
 	return item
 end
 
-function UIManager:getItem(name)
-	local c = table.getn(self.items)
+function UIManager:getItem(name,deep)
+	local c = #self.items
 	if c>0 then
 		for i=1,c do
 			if self.items[i]:getName() == name then
 				return self.items[i]
+			elseif self.items[i].items ~= nil and deep == true then
+				self.items[i]:getItem(name,deep)
 			end
-		end
-	else
-		return nil
+		end		
 	end
+	return nil
 end
+
+-- element deep search
 
 function UIManager:draw()
 	local dl = self.drawList
@@ -138,10 +88,10 @@ function UIManager:update(dt)
 	end
 end
 
-function UIManager:mousemoved(x,y)
+function UIManager:mousemoved(x,y,dx,dy)
 	local ill = self.inputList
 	for i,v in ipairs(ill) do
-		if v.active == true then v:mousemoved(x,y) end
+		if v.active == true then v:mousemoved(x,y,dx,dy) end
 	end
 end
 
@@ -169,5 +119,18 @@ function UIManager:keyreleased(key)
 	end
 end
 
+function UIManager:textinput(t)
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then v:textinput(t) end
+	end
+end
 
+function UIManager:onchangewindow(w,h) 
+	for i,v in ipairs(self.items) do
+		v:onchangewindow(w,h)
+	end
+end
 
+function UIManager:init()
+	uistartup(self)
+end

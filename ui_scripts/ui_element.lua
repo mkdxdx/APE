@@ -26,4 +26,42 @@ function Element:keypressed(key,isrepeat) end
 function Element:keyreleased(key) end
 function Element:mousepressed(x,y,b) end
 function Element:mousereleased(x,y,b) end
-function Element:mousemoved(x,y) end
+function Element:mousemoved(x,y,dx,dy) end
+function Element:onchangewindow(w,h) end
+function Element:textinput(t)	end
+
+
+Container = {}
+Container.__index = Container
+Container.name = "Container"
+Container.ident = "ui_container"
+function Container:new(name)
+	local self = setmetatable({},Container)
+	self.name = name or self.name
+	return self
+end
+setmetatable(Container,{__index = Element})
+
+function Container:addItem(item)
+	table.insert(self.items,item)
+end
+
+function Container:getItem(name)
+	local c = #self.items
+	if c>0 then
+		for i=1,c do
+			if self.items[i]:getName() == item then return self.items[i] 
+			elseif self.items[i].items ~= nil then return self.items[i]:getItem(name) end
+		end
+	end
+	return nil
+end
+
+function Container:deleteItem(name)
+	local c = #self.items
+	if c>0 then
+		for k,v in pairs(self.items) do
+			self.items[k] = nil
+		end
+	end
+end

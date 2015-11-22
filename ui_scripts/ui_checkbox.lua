@@ -8,9 +8,11 @@ CheckBox.__index = CheckBox
 CheckBox.caption = "CheckBox"
 CheckBox.ident = "ui_checkbox"
 CheckBox.colorHighlight = {192,192,192,128}
+CheckBox.colorWeakFill = {64,64,64,128}
 CheckBox.name = "CheckBox"
 CheckBox.w = 16
 CheckBox.h = 16
+CheckBox.buttonStyle = false
 function CheckBox:new(name)
 	local self = {}
 	setmetatable(self,CheckBox)
@@ -29,13 +31,22 @@ end
 
 function CheckBox:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.colorHighlight)
-	l_gfx.rectangle("line",self.x,self.y,16,16)
-	if self.checked == true then
+	if self.buttonStyle == true then
+		l_gfx.setColor(self.colorLine)
+		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
+		if self.checked == true then l_gfx.setColor(self.colorFill) else l_gfx.setColor(self.colorWeakFill)	end
+		l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
+		l_gfx.setColor(self.colorFont)
+		l_gfx.printf(self.caption,self.x,self.y+(self.h/2-7),self.w,"center")
+	else
 		l_gfx.setColor(self.colorHighlight)
-		l_gfx.rectangle("fill",self.x+2,self.y+2,12,12)
+		l_gfx.rectangle("line",self.x,self.y,16,16)
+		if self.checked == true then
+			l_gfx.setColor(self.colorHighlight)
+			l_gfx.rectangle("fill",self.x+2,self.y+2,12,12)
+		end
+		l_gfx.setColor(self.colorFont)
+		l_gfx.print(self.caption,self.x+18,self.y)
 	end
-	l_gfx.setColor(self.dFontColor)
-	l_gfx.print(self.caption,self.x+18,self.y)
 	l_gfx.setColor(cr,cg,cb,ca)
 end

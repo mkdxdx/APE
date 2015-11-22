@@ -15,6 +15,8 @@ Image.r = 0
 Image.kx = 0
 Image.ky = 0
 Image.showBorder = false
+Image.colorTint = {255,255,255,255}
+Image.mode = "alpha"
 function Image:new(name)
 	local self = {}
 	setmetatable(self,Image)
@@ -25,21 +27,56 @@ setmetatable(Image,{__index = UIElement})
 
 function Image:draw()
 	if self.img ~= nil then
-		l_gfx.setColor(255,255,255,255)
+		l_gfx.setColor(self.colorTint)
+		if self.stencil ~= nil then
+			l_gfx.setStencil(self.stencil)
+		end
+		local mode = l_gfx.getBlendMode()
+		l_gfx.setBlendMode(self.mode)
 		l_gfx.draw(self.img, self.x,self.y,self.r,self.sx,self.sy,self.ox,self.oy,self.kx,self.ky)
+		l_gfx.setBlendMode(mode)
+		l_gfx.setStencil()
 		if self.showBorder == true then
-			l_gfx.setColor(self.dLineColor)
+			l_gfx.setColor(self.colorLine)
 			local w,h = self.img:getWidth(),self.img:getHeight()
 			l_gfx.rectangle("line",self.x-1,self.y-1,w+2,h+2)
 		end
 	end
-	
 end
+
 
 function Image:setImage(img)
 	if type(img) == "string" then
 		self.img = l_gfx.newImage(img)
 	else 
 		self.img = img
+	end
+end
+
+QuadSlider = {}
+QuadSlider.__index = QuadSlider
+QuadSlider.name = "QuadSlider"
+QuadSlider.ident = "ui_quadslider"
+function QuadSlider:new(name)
+	local self = setmetatable({},QuadSlider)
+	self.name = name or self.name
+	self.index = 1
+	return self
+end
+setmetatable(QuadSlider,{__index = Image})
+
+function QuadSlider:setQuads(q)
+	self.quads = q
+end
+
+function QuadSlider:draw()
+	if self.img ~= nil and self.quads ~= nil and self.index<=#self.quads then
+		l_gfx.setColor(self.colorTint)
+		l_gfx.draw(self.img, self.quads[self.index], self.x,self.y,self.r,self.sx,self.sy,self.ox,self.oy,self.kx,self.ky)
+		if self.showBorder == true then
+			l_gfx.setColor(self.colorLine)
+			local w,h = self.img:getWidth(),self.img:getHeight()
+			l_gfx.rectangle("line",self.x-1,self.y-1,w+2,h+2)
+		end
 	end
 end

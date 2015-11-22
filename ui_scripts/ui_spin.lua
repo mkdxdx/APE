@@ -1,5 +1,5 @@
 local l_gfx = love.graphics
-
+local mouse = love.mouse
 -- this is a spin element
 -- currently it's only way of control is by mousewheel, wheelup increases the value by a step, wheeldown decreases
 -- it also has mutlipliers, like precise multiplier, base multiplier, coarse and turbo multipliers
@@ -14,22 +14,25 @@ Spin.leftCaption = false
 Spin.w = 48
 Spin.h = 16
 Spin.caption = "Spin"
-Spin.colorHighlight = {128,128,128,128}
+Spin.colorHighlight = {160,160,160,128}
 Spin.name = "Spin"
 Spin.caption_xpad = -4
 Spin.caption_ypad = 0
+Spin.updateable = true
 function Spin:new(name)
 	local self = {}
 	setmetatable(self,Spin)
 	self.value = 0
 	self.step = 1
 	self.step_mult = 1
+	self.isHeld = false
 	self.allowMult = false
 	self.displMult = false
 	self.mult_coarse = 10
 	self.mult_base = 1
 	self.mult_precise = 0.1
 	self.mult_turbo = 100
+	self.held_timer = 0
 	self.max = nil
 	self.min = nil
 	if name ~= nil then self.name = name end
@@ -44,8 +47,34 @@ function Spin:click(b)
 	elseif b == "wd" then
 		self:decrement()
 		self:changeValue()
+	elseif b == "l" then
+		self.isHeld = true	
+		local mx,my = mouse.getPosition()
+		if self:isMouseOver() then
+			if mx>=self.x+self.w/2 then self:increment() else self:decrement() end
+			self:changeValue()
+		end
 	end
-	
+end
+
+function Spin:update(dt)
+	if self.isHeld == true then
+		self.held_timer = self.held_timer + dt
+		if self.held_timer>0.5 then
+			local mx,my = mouse.getPosition()
+			if self:isMouseOver() then
+				if mx>=self.x+self.w/2 then self:increment() else self:decrement() end
+				self:changeValue()
+			end
+		end
+	end
+end
+
+function Spin:unclick(b)
+	if b == "l" then
+		self.isHeld = false
+		self.held_timer = 0
+	end
 end
 
 function Spin:increment()
@@ -89,28 +118,31 @@ end
 function Spin:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
 	if self:isMouseOver() == true then
+		local mx,my = mouse:getPosition()
+		l_gfx.setColor(self.colorHardFill)
+		if mx>=self.x+self.w/2 then 
+			l_gfx.rectangle("fill",self.x+self.w/2,self.y,self.w/2,self.h)
+		else
+			l_gfx.rectangle("fill",self.x,self.y,self.w/2,self.h)
+		end
 		if self.displMult == true then
-			
 			local str = "x"..self.step_mult*self.step
-			l_gfx.setColor(self.colorHardFill)
+			
 			l_gfx.rectangle("fill",self.x+self.w+2,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str)+2,14)
-			l_gfx.setColor(self.dFontColor)
+			l_gfx.setColor(self.colorFont)
 			l_gfx.rectangle("line",self.x+self.w+2,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str),14)
-			l_gfx.setColor(self.dFontColor)
+			l_gfx.setColor(self.colorFont)
 			l_gfx.print(str,self.x+self.w+2,self.y+(self.h/2-7))
 		end
 		l_gfx.setColor(self.colorHighlight)
 	else
-		l_gfx.setColor(self.dFillColor)
+		l_gfx.setColor(self.colorFill)
 	end
 	l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
-	l_gfx.setColor(self.dFontColor)
-	--local factor = 1/(self.step*self.step_mult)
-	--local factor = 1
-	--local v = math.floor(self.value*factor)/factor
-	local v = "±"..self.value
-	
-	l_gfx.printf(v,self.x,self.y+(self.h/2-7),self.w,"center")
+	l_gfx.setColor(self.colorFont)
+	local v = self.value
+	local sh = self.h/2-7
+	l_gfx.printf(v,self.x,self.y+sh,self.w,"center")
 	if self.leftCaption == true then
 		l_gfx.print(self.caption,self.x-l_gfx:getFont():getWidth(self.caption)+self.caption_xpad,self.y+(self.h/2-7)+self.caption_ypad)
 	else

@@ -9,6 +9,7 @@ PageSwitch.ident = "ui_pageswitch"
 PageSwitch.name = "PageSwitch"
 PageSwitch.updateable = true
 PageSwitch.updateAll = false -- if true, it will try to update all the pages in it, instead of only current one
+PageSwitch.isContainer = true
 function PageSwitch:new(name)
 	local self = {}
 	setmetatable(self,PageSwitch)
@@ -67,14 +68,35 @@ function PageSwitch:keyreleased(key)
 	if c>0 then self.pages[self.index]:keyreleased(key,isrepeat) end
 end
 
+function PageSwitch:setPosition(x,y)
+	if self.isContainer == true then
+		local dx,dy = (x or self.x) - self.x, (y or self.y) - self.y 
+		local c = #self.pages 
+		if c>0 then
+			for i=1,c do 
+				local e = self.pages[i]
+				e:setPosition(e.x+dx,e.y+dy)
+			end
+		end
+	end
+	self.x,self.y = x or self.x, y or self.y
+end
 
 
-function PageSwitch:addPage(name)
-	local indx = table.getn(self.pages)+1
-	local page = Page:new(name or ("Page"..indx))
-	table.insert(self.pages,page)
-	self.index = indx
-	return page
+
+function PageSwitch:addPage(pg)
+	if type(pg) == "table" then
+		local indx = table.getn(self.pages)+1
+		table.insert(self.pages,pg)
+		self.index = indx
+		return pg
+	else	
+		local indx = table.getn(self.pages)+1
+		local page = Page:new(pg or ("Page"..indx))
+		table.insert(self.pages,page)
+		self.index = indx
+		return page
+	end
 end
 
 function PageSwitch:removePage(page)
@@ -126,6 +148,7 @@ Page = {}
 Page.__index = Page
 Page.ident = "ui_page"
 Page.name = "Page"
+Page.caption = "Page"
 Page.showBorder = false
 function Page:new(name)
 	local self = {}

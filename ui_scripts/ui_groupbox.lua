@@ -15,6 +15,10 @@ GroupBox.showBorder = true
 GroupBox.isContainer = true
 GroupBox.caption_xpad = 4
 GroupBox.caption_ypad = -16
+GroupBox.captionAlign = "center"
+GroupBox.colorBcgFill = {0,32,32,128}
+GroupBox.showBackground = false
+GroupBox.input = true
 
 function GroupBox:new(name)
 	local self = {}
@@ -36,19 +40,23 @@ setmetatable(GroupBox,{__index = UIElement})
 
 function GroupBox:draw()
 	local r,g,b,a = l_gfx.getColor()
+	if self.showBackground == true then
+		l_gfx.setColor(self.colorBcgFill)
+		l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
+	end
 	if self.showBorder == true then
-		l_gfx.setColor(self.dLineColor)
+		l_gfx.setColor(self.colorLine)
 		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
 	else
 		local c_width,c_height = self.w/2,self.h/2
 		if self.cornerLT == true then
-			l_gfx.setColor(self.dLineColor)
+			l_gfx.setColor(self.colorLine)
 			l_gfx.line(self.x,self.y,self.x,self.y+c_height)
 			l_gfx.line(self.x,self.y,self.x+c_width,self.y)
 		end
 	end
-	l_gfx.setColor(self.dFontColor)
-	l_gfx.print(self.caption,self.x+self.caption_xpad,self.y+self.caption_ypad)
+	l_gfx.setColor(self.colorFont)
+	l_gfx.printf(self.caption,self.x,self.y+self.caption_ypad,self.w,self.captionAlign)
 	local dl = self.drawList
 	local c = table.getn(dl)
 	if c>0 then
@@ -69,23 +77,33 @@ function GroupBox:update(dt)
 	end
 end
 
-function GroupBox:mousemoved(x,y)
+function GroupBox:mousemoved(x,y,dx,dy)
 	local ill = self.inputList
 	for i,v in ipairs(ill) do
-		if v.active == true then v:mousemoved(x,y) end
+		if v.active == true then v:mousemoved(x,y,dx,dy) end
 	end
 end
 
 function GroupBox:mousepressed(x,y,b)
-	for i,v in ipairs(self.inputList) do
-		if v.active == true then v:mousepressed(x,y,b) end
+	local r 
+	if self:isMouseOver(x,y) == true then
+		self:click(b)
 	end
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then local tr = v:mousepressed(x,y,b) if tr~=nil then r = tr end   end
+	end
+	return r
 end
 
 function GroupBox:mousereleased(x,y,b)
-	for i,v in ipairs(self.inputList) do
-		if v.active == true then v:mousereleased(x,y,b) end
+	local r
+	if self:isMouseOver(x,y) == true then
+		self:unclick(b)
 	end
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then local tr = v:mousereleased(x,y,b) if tr~=nil then r = tr end   end
+	end
+	return r
 end
 
 function GroupBox:keypressed(key,isrepeat)
@@ -100,6 +118,12 @@ function GroupBox:keyreleased(key)
 	end
 end
 
+function GroupBox:textinput(t)
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then v:textinput(t) end
+	end
+end
+
 function GroupBox:addItem(item)
 	table.insert(self.items,item)
 	if item.updateable == true then
@@ -108,23 +132,24 @@ function GroupBox:addItem(item)
 	if item.drawable == true then
 		table.insert(self.drawList,item)
 	end
-	if item.input == true then
+	if item.input == true then	
 		table.insert(self.inputList,item)
 	end
 	return item
 end
 
-function GroupBox:getItem(name)
-	local c = table.getn(self.items)
+function GroupBox:getItem(name,deep)
+	local c = #self.items
 	if c>0 then
 		for i=1,c do
 			if self.items[i]:getName() == name then
 				return self.items[i]
+			elseif self.items[i].items ~= nil and deep == true then
+				self.items[i]:getItem(name,deep)
 			end
-		end
-	else
-		return nil
+		end		
 	end
+	return nil
 end
 
 function GroupBox:setPosition(x,y)
@@ -139,4 +164,10 @@ function GroupBox:setPosition(x,y)
 		end
 	end
 	self.x,self.y = x or self.x, y or self.y
+end
+
+function GroupBox:onchangewindow(w,h) 
+	for i,v in ipairs(self.items) do
+		v:onchangewindow(w,h)
+	end
 end

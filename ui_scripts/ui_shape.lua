@@ -20,7 +20,7 @@ setmetatable(Rectangle,{__index = UIElement})
 
 function Rectangle:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.dFillColor)
+	l_gfx.setColor(self.colorFill)
 	if self.centerOnPos == true then
 		l_gfx.rectangle(self.mode,self.x-self.w/2,self.y-self.h/2,self.w,self.h)
 	else
@@ -50,7 +50,7 @@ setmetatable(Circle,{__index = UIElement})
 
 function Circle:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.dFillColor)
+	l_gfx.setColor(self.colorFill)
 	if self.centerOnPos == true then
 		l_gfx.circle(self.mode,self.x,self.y,self.radius,self.segments)
 	else
@@ -75,7 +75,7 @@ setmetatable(Line,{__index = UIElement})
 
 function Line:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.dFillColor)
+	l_gfx.setColor(self.colorFill)
 	if self.horizontal == true then
 		l_gfx.line(self.x.self.y,self.x+self.w,self.y)
 	else
@@ -102,7 +102,7 @@ function Cross:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
 	local bm = l_gfx.getBlendMode()
 	l_gfx.setBlendMode(self.blendMode)
-	l_gfx.setColor(self.dLineColor)
+	l_gfx.setColor(self.colorLine)
 	if self.centerOnPos == true then
 		l_gfx.line(self.x-self.w/2,self.y,self.x+self.w/2,self.y)
 		l_gfx.line(self.x,self.y-self.h/2,self.x,self.y+self.h/2)
@@ -132,9 +132,11 @@ function Arc:new(name)
 end
 setmetatable(Arc,{__index = UIElement})
 
-function Arc:draw()
+function Arc:draw(st)
+	print("Drawn")
+	local self = st or self
 	local cr,cg,cb,ca = love.graphics.getColor()
-	l_gfx.setColor(self.dFillColor)
+	l_gfx.setColor(self.colorFill)
 	if self.centerOnPos == true then
 		l_gfx.arc(self.mode,self.x,self.y,self.radius,self.a1,self.a2,self.segments)
 	else
@@ -145,4 +147,44 @@ end
 
 function Arc:setAngle(a1,a2)
 	self.a1,self.a2 = a1 or self.a1,a2 or self.a2
+end
+
+Polygon = {}
+Polygon.__index = Polygon
+Polygon.ident = "ui_polygon"
+Polygon.mode = "fill"
+Polygon.name = "Polygon"
+Polygon.colorFill = {32,64,64,48}
+function Polygon:new(name)
+	local self = {}
+	setmetatable(self,Polygon)
+	if name ~= nil then self.name = name end
+	return self
+end
+setmetatable(Polygon,{__index = UIElement})
+
+function Polygon:setVertices(v)
+	if #v%2 == 0 then
+		self.v = v
+	end
+end
+
+function Polygon:setPosition(x,y)
+	local px,py = self.x,self.y
+	local dx,dy = x-px,y-py
+	if self.v ~= nil then
+		for i=1,#self.v,2 do 
+			self.v[i] = self.v[i]+dx
+			self.v[i+1] = self.v[i+1]+dy
+		end
+	end
+end
+
+function Polygon:draw()
+	if self.v ~= nil then
+		local r,g,b,a = l_gfx.getColor()
+		l_gfx.setColor(self.colorFill)
+		l_gfx.polygon(self.mode,self.v)
+		l_gfx.setColor(r,g,b,a)
+	end
 end
