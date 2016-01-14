@@ -27,20 +27,22 @@ setmetatable(Image,{__index = UIElement})
 
 function Image:draw()
 	if self.img ~= nil then
+		local r,g,b,a = l_gfx.getColor()
 		l_gfx.setColor(self.colorTint)
 		if self.stencil ~= nil then
-			l_gfx.setStencil(self.stencil)
+			l_gfx.stencil(self.stencil)
 		end
 		local mode = l_gfx.getBlendMode()
 		l_gfx.setBlendMode(self.mode)
 		l_gfx.draw(self.img, self.x,self.y,self.r,self.sx,self.sy,self.ox,self.oy,self.kx,self.ky)
 		l_gfx.setBlendMode(mode)
-		l_gfx.setStencil()
+		l_gfx.setStencilTest()
 		if self.showBorder == true then
 			l_gfx.setColor(self.colorLine)
 			local w,h = self.img:getWidth(),self.img:getHeight()
 			l_gfx.rectangle("line",self.x-1,self.y-1,w+2,h+2)
 		end
+		l_gfx.setColor(r,g,b,a)
 	end
 end
 

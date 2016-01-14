@@ -26,6 +26,7 @@ function Element:keypressed(key,isrepeat) end
 function Element:keyreleased(key) end
 function Element:mousepressed(x,y,b) end
 function Element:mousereleased(x,y,b) end
+function Element:wheelmoved(x,y) end
 function Element:mousemoved(x,y,dx,dy) end
 function Element:onchangewindow(w,h) end
 function Element:textinput(t)	end

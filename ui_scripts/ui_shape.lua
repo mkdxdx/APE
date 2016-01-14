@@ -133,7 +133,6 @@ end
 setmetatable(Arc,{__index = UIElement})
 
 function Arc:draw(st)
-	print("Drawn")
 	local self = st or self
 	local cr,cg,cb,ca = love.graphics.getColor()
 	l_gfx.setColor(self.colorFill)

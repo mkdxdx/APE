@@ -17,6 +17,7 @@ end
 setmetatable(TextField,{__index = UIElement})
 
 function TextField:draw()
+	local cr,cg,cb,ca = l_gfx.getColor()
 	l_gfx.setColor(self.colorFill)
 	l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
 	l_gfx.setColor(self.colorFont)
@@ -25,6 +26,7 @@ function TextField:draw()
 		l_gfx.setColor(self.colorLine)
 		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
 	end
+	l_gfx.setColor(cr,cg,cb,ca)
 end
 
 function TextField:mousepressed(x,y,b)

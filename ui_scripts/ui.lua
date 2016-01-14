@@ -15,10 +15,6 @@ require(ui_scrdir.."ui_listbox")
 require(ui_scrdir.."ui_image")
 require(ui_scrdir.."ui_collection")
 require(ui_scrdir.."ui_timer")
-require(ui_scrdir.."ui_playercontroller")
-require(ui_scrdir.."ui_textfield")
-require(ui_scrdir.."ui_pointplotter")
-require(ui_scrdir.."ui_canvas")
 
 local l_gfx = love.graphics
 
@@ -104,6 +100,12 @@ end
 function UIManager:mousereleased(x,y,b)
 	for i,v in ipairs(self.inputList) do
 		if v.active == true then v:mousereleased(x,y,b) end
+	end
+end
+
+function UIManager:wheelmoved(x,y)
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then v:wheelmoved(x,y) end
 	end
 end
 

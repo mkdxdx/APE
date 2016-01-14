@@ -21,7 +21,6 @@ RadioButton.__index = RadioButton
 RadioButton.ident = "ui_radiobutton"
 RadioButton.name = "RadioButton"
 RadioButton.caption = "RadioButton"
-RadioButton.colorHighlight = {192,192,192,128}
 RadioButton.w = 16
 RadioButton.h = 16
 RadioButton.buttonStyle = false -- if true, it will be drawn as a button
@@ -38,7 +37,7 @@ setmetatable(RadioButton,{__index = UIElement})
 
 function RadioButton:mousepressed(x,y,b) 
 	if self:isMouseOver(x,y) then 
-		if b == "l" then
+		if b == 1 then
 			local c = #self.group
 			if c>0 then
 				for i=1,c do

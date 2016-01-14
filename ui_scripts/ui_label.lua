@@ -65,8 +65,8 @@ end
 setmetatable(TextBox,{__index = Label})
 
 function TextBox:alignBox()
-	local w,l =  l_gfx.getFont():getWrap(self.caption,self.w)
-	self.h = l_gfx.getFont():getHeight()*l
+	--local w,l =  l_gfx.getFont():getWrap(self.caption,self.w)
+	--self.h = l_gfx.getFont():getHeight()*l
 end
 
 

@@ -17,6 +17,7 @@ UIElement.colorDisabledFill = {32,32,32,128}
 UIElement.colorLine = {192,192,192,128}
 UIElement.colorFont = {255,255,255,255}
 UIElement.colorHardFill =  {64,64,64,255}
+UIElement.colorHighlight = {192,192,192,128}
 UIElement.ident = "ui_uielement"
 UIElement.name = "UIElement"
 UIElement.caption_xpad = 0 -- if element has caption in it, it will draw caption with shift text's position with these coordinates

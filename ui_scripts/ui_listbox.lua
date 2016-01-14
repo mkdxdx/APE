@@ -1,5 +1,5 @@
 local l_gfx = love.graphics
-local min,max = math.min,math.max
+local min = math.min
 
 -- simple list box with index and clickable string list
 -- usually linked to collection in its behavior
@@ -12,7 +12,6 @@ ListBox.caption = "ListBox"
 ListBox.itemSpacing = 1 -- this will define a gap between items
 ListBox.itemCaptionAlign = "left" 
 ListBox.itemCaptionPadding = 4 -- this will make text appear shifted
-ListBox.colorHighlight = {160,160,160,128}
 ListBox.displayMax = 16
 ListBox.shift = 0
 ListBox.showBorder = false
@@ -32,7 +31,7 @@ setmetatable(ListBox,{__index = UIElement})
 
 function ListBox:mousepressed(x,y,b)
 	if self:isMouseOver(x,y) then
-		if b == "l" or b == "r" then
+		if b == 1 or b == 2 then
 			local c = #self.items
 			if c>0 then
 				local sx,sy,sw,ih = self.x,self.y,self.w,self.itemHeight
@@ -45,15 +44,19 @@ function ListBox:mousepressed(x,y,b)
 					end
 				end
 			end
-		elseif b == "wu" then
-			self.shift = self.shift - 1
-			if self.shift<0 then self.shift = 0 end
-		elseif b == "wd" then	
-			if self.shift<(#self.items-self.displayMax) then
-				self.shift = self.shift+1
-			end
-		end
 		self:click(b)
+		end
+	end
+end
+
+function ListBox:wheelmoved(x,y)
+	if y > 0 then
+		self.shift = self.shift - 1
+		if self.shift<0 then self.shift = 0 end
+	elseif y < 0 then	
+		if self.shift<(#self.items-self.displayMax) then
+			self.shift = self.shift+1
+		end
 	end
 end
 
@@ -107,6 +110,7 @@ function ListBox:setItemValue(item,value)
 end
 
 function ListBox:draw()
+	local cr,cg,cb,ca = l_gfx.getColor()
 	if self.showBorder == true then
 		l_gfx.setColor(self.colorLine)
 		l_gfx.rectangle("line",self.x,self.y,self.w,self.h)
@@ -115,7 +119,7 @@ function ListBox:draw()
 	local fh = l_gfx.getFont():getHeight()/2
 	if c>0 then	
 		local sx,sy,sw,ih = self.x,self.y,self.w,self.itemHeight
-		for i=(self.shift+1),(self.shift+min(self.displayMax,c)) do
+		for i=(self.shift+1),(self.shift+math.min(self.displayMax,c)) do
 			if self.index == i then
 				l_gfx.setColor(self.colorHighlight)
 			else
@@ -129,7 +133,11 @@ function ListBox:draw()
 			
 			l_gfx.rectangle("fill",ix,iy,iw,self.itemHeight)
 			l_gfx.setColor(self.colorFont)
-			l_gfx.printf(self.items[i],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			if type(self.items[i]) == "table" then
+				l_gfx.printf(self.items[i][1],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			elseif type(self.items[i]) == "string" then
+				l_gfx.printf(self.items[i],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			end
 		end
 		if self.showScroll == true then
 			l_gfx.setColor(self.colorFill)
@@ -138,6 +146,7 @@ function ListBox:draw()
 			l_gfx.rectangle("fill",self.w+self.x-self.scrollWidth,self.y+self.shift*self.displayMax,self.scrollWidth,h)
 		end
 	end
+	l_gfx.setColor(cr,cg,cb,ca)
 end
 
 
@@ -176,7 +185,7 @@ function GaugeList:draw()
 	local fh = l_gfx.getFont():getHeight()/2
 	if c>0 then	
 		local sx,sy,sw,ih = self.x,self.y,self.w,self.itemHeight
-		for i=(self.shift+1),(self.shift+min(self.displayMax,c)) do
+		for i=(self.shift+1),(self.shift+math.min(self.displayMax,c)) do
 			if self.index == i then
 				l_gfx.setColor(self.colorHighlight)
 			else
@@ -194,12 +203,16 @@ function GaugeList:draw()
 	
 			l_gfx.rectangle("fill",ix,iy,prg*iw,self.itemHeight)
 			l_gfx.setColor(self.colorFont)
-			l_gfx.printf(self.items[i][1],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			if type(self.items[i][1]) == "table" then
+				l_gfx.printf(self.items[i][1][1],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			elseif type(self.items[i][1]) == "string" then
+				l_gfx.printf(self.items[i][1],ix+self.itemCaptionPadding,iy+fpad,iw-self.itemCaptionPadding,self.itemCaptionAlign)
+			end
 		end
 		if self.showScroll == true then
 			l_gfx.setColor(self.colorFill)
 			l_gfx.rectangle("line",self.w+self.x-self.scrollWidth,self.y,self.scrollWidth,self.h)
-			local h = self.h/(max(#self.items/self.displayMax,1))
+			local h = self.h/(math.max(#self.items/self.displayMax,1))
 			l_gfx.rectangle("fill",self.w+self.x-self.scrollWidth,self.y+self.shift*self.displayMax,self.scrollWidth,h)
 		end
 	end

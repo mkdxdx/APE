@@ -95,6 +95,14 @@ function GroupBox:mousepressed(x,y,b)
 	return r
 end
 
+function GroupBox:wheelmoved(x,y)
+	local r 
+	for i,v in ipairs(self.inputList) do
+		if v.active == true then local tr = v:wheelmoved(x,y) if tr~=nil then r = tr end   end
+	end
+	return r
+end
+
 function GroupBox:mousereleased(x,y,b)
 	local r
 	if self:isMouseOver(x,y) == true then

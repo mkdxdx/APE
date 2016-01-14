@@ -11,7 +11,7 @@
 	otherwise some features will cause editor to crash =(
 ]]
 
-
+local l_gfx = love.graphics
 ui_scrdir = "ui_scripts/"
 require(ui_scrdir.."ui")
 
@@ -29,13 +29,13 @@ function love.load()
 	pgsc:setPosition(0,love.graphics.getHeight()-32)
 	local pgadd = pgsc:getItem("ButtonAdd")
 	function pgadd:click(b)
-		if b == "l" then 
+		if b == 1 then 
 			local pg = pgs:addPage() 
 			pgsc.caption = pgsc.pageswitch.index.."/"..#pgsc.pageswitch.pages
 			fillPage(pg) 
 		end
 	end
-	pgadd:click("l")	
+	pgadd:click(1)	
 end
 
 function love.update(dt)
@@ -52,6 +52,10 @@ end
 
 function love.mousepressed(x,y,b)
 	uim:mousepressed(x,y,b)
+end
+
+function love.wheelmoved(x,y)
+	uim:wheelmoved(x,y)
 end
 
 function love.mousereleased(x,y,b)
@@ -88,7 +92,7 @@ function fillPage(page)
 	end
 	
 	local emspr = page:addItem(Arc:new("Arc_ESpread"))
-	emspr.dFillColor = {255,255,0,255}
+	emspr.colorFill = {255,255,0,255}
 	emspr.mode = "line"
 	emspr.radius = 128
 	emspr:setAngle(-0.01,0.01)
@@ -96,7 +100,7 @@ function fillPage(page)
 	emspr:hide()
 	
 	local emarea = page:addItem(Rectangle:new("R_EArea"))
-	emarea.dFillColor = {255,0,0,255}
+	emarea.colorFill = {255,0,0,255}
 	emarea.mode = "line"
 	emarea.w = 0
 	emarea.h = 0
@@ -160,7 +164,7 @@ function fillPage(page)
 		rbdn:setSize(64,16)
 		rbdn:setPosition(gb_distr.x+8,gb_distr.y+8)
 		function rbdn:click(b) 
-			if b == "l" then  
+			if b == 1 then  
 				gb_distr:getItem("SP_Distr_X"):hide()
 				gb_distr:getItem("SP_Distr_Y"):hide()
 				page:getItem("ParticleEmitter").ps:setAreaSpread(gb_distr:getItem("RB_Distr_None").group[rbdn:getGroupIndex()].caption,gb_distr:getItem("SP_Distr_X").value,gb_distr:getItem("SP_Distr_Y").value)
@@ -180,7 +184,7 @@ function fillPage(page)
 		rbdnorm:setSize(64,16)
 		rbdnorm:setPosition(gb_distr.x+78,gb_distr.y+8)
 		function rbdnorm:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				gb_distr:getItem("SP_Distr_X"):show() 
 				gb_distr:getItem("SP_Distr_Y"):show()
 				if gb_distr:getItem("SP_Distr_X").value <= 0 then gb_distr:getItem("SP_Distr_X").value = 1 end
@@ -202,7 +206,7 @@ function fillPage(page)
 		rbdu:setSize(64,16)
 		rbdu:setPosition(gb_distr.x+148,gb_distr.y+8)
 		function rbdu:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				gb_distr:getItem("SP_Distr_X"):show() 
 				gb_distr:getItem("SP_Distr_Y"):show()
 				if gb_distr:getItem("SP_Distr_X").value <= 0 then gb_distr:getItem("SP_Distr_X").value = 1 end
@@ -637,7 +641,7 @@ function fillPage(page)
 		rbsz1:setPosition(8,28)
 		rbsz1.checked = true
 		function rbsz1:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz1.group[rbsz1:getGroupIndex()].caption)
 			end
@@ -649,7 +653,7 @@ function fillPage(page)
 		rbsz2.caption = "1"
 		rbsz2:setPosition(33,28)
 		function rbsz2:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz2.group[rbsz2:getGroupIndex()].caption)
 			end
@@ -661,7 +665,7 @@ function fillPage(page)
 		rbsz3.caption = "1"
 		rbsz3:setPosition(58,28)
 		function rbsz3:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz3.group[rbsz3:getGroupIndex()].caption)
 			end
@@ -673,7 +677,7 @@ function fillPage(page)
 		rbsz4.caption = "1"
 		rbsz4:setPosition(83,28)
 		function rbsz4:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz4.group[rbsz4:getGroupIndex()].caption)
 			end
@@ -685,7 +689,7 @@ function fillPage(page)
 		rbsz5.caption = "1"
 		rbsz5:setPosition(108,28)
 		function rbsz5:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz5.group[rbsz5:getGroupIndex()].caption)
 			end
@@ -697,7 +701,7 @@ function fillPage(page)
 		rbsz6.caption = "1"
 		rbsz6:setPosition(133,28)
 		function rbsz6:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz6.group[rbsz6:getGroupIndex()].caption)
 			end
@@ -709,7 +713,7 @@ function fillPage(page)
 		rbsz7.caption = "1"
 		rbsz7:setPosition(158,28)
 		function rbsz7:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz7.group[rbsz7:getGroupIndex()].caption)
 			end
@@ -721,7 +725,7 @@ function fillPage(page)
 		rbsz8.caption = "1"
 		rbsz8:setPosition(183,28)
 		function rbsz8:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
 				val.value = tonumber(rbsz8.group[rbsz8:getGroupIndex()].caption)
 			end
@@ -820,7 +824,7 @@ function fillPage(page)
 		rbcl1:setPosition(8,28)
 		rbcl1.checked = true
 		function rbcl1:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl1.group[rbcl1:getGroupIndex()].color[i] end
@@ -833,7 +837,7 @@ function fillPage(page)
 		rbcl2.caption = "1"
 		rbcl2:setPosition(33,28)
 		function rbcl2:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl2.group[rbcl1:getGroupIndex()].color[i] end
@@ -846,7 +850,7 @@ function fillPage(page)
 		rbcl3.caption = "1"
 		rbcl3:setPosition(58,28)
 		function rbcl3:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl3.group[rbcl1:getGroupIndex()].color[i] end
@@ -859,7 +863,7 @@ function fillPage(page)
 		rbcl4.caption = "1"
 		rbcl4:setPosition(83,28)
 		function rbcl4:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl4.group[rbcl1:getGroupIndex()].color[i] end
@@ -872,7 +876,7 @@ function fillPage(page)
 		rbcl5.caption = "1"
 		rbcl5:setPosition(108,28)
 		function rbcl5:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl5.group[rbcl1:getGroupIndex()].color[i] end
@@ -885,7 +889,7 @@ function fillPage(page)
 		rbcl6.caption = "1"
 		rbcl6:setPosition(133,28)
 		function rbcl6:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl6.group[rbcl1:getGroupIndex()].color[i] end
@@ -898,7 +902,7 @@ function fillPage(page)
 		rbcl7.caption = "1"
 		rbcl7:setPosition(158,28)
 		function rbcl7:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl7.group[rbcl1:getGroupIndex()].color[i] end
@@ -911,7 +915,7 @@ function fillPage(page)
 		rbcl8.caption = "1"
 		rbcl8:setPosition(183,28)
 		function rbcl8:click(b) 
-			if b == "l" then 
+			if b == 1 then 
 				local cs = page:getItem("GB_Color_Selector")
 				local valarr = {cs:getItem("SP_Color_ValR"),cs:getItem("SP_Color_ValG"),cs:getItem("SP_Color_ValB"),cs:getItem("SP_Color_ValA"),}
 				for i=1,4 do valarr[i].value = rbcl8.group[rbcl1:getGroupIndex()].color[i] end
@@ -1045,7 +1049,7 @@ function fillPage(page)
 		local lbtex = gbtexman:addItem(ListBox:new("LB_TextureList"))
 		lbtex:setSize(160,276)
 		lbtex:setPosition(4,32)
-		function lbtex:click(b) if b == "l" then 
+		function lbtex:click(b) if b == 1 then 
 			local tex = uim:getItem("IC_Textures"):getItem(lbtex:getSelected())
 			page:getItem("ParticleEmitter").ps:setTexture(tex)	
 			page:getItem("GB_Tex_Manager"):getItem("IM_TM_Texture"):setImage(uim:getItem("IC_Textures"):getItem(lbtex:getSelected()))
@@ -1077,7 +1081,7 @@ function fillPage(page)
 		btmrefr:setPosition(4,4)
 		btmrefr.caption = "Reload list"
 		function btmrefr:click(b) 
-			if b=="l" then
+			if b == 1 then
 				local ic = uim:getItem("IC_Textures")
 				local lfs = love.filesystem
 				local files = lfs.getDirectoryItems("particles/")
@@ -1094,7 +1098,7 @@ function fillPage(page)
 				end
 			end
 		end
-		btmrefr:click("l")
+		btmrefr:click(1)
 		
 		
 		local ltexcapt = gbtexman:addItem(Label:new("L_TextureCaption"))
@@ -1115,7 +1119,7 @@ function fillPage(page)
 		
 		local quadrect = gbtexman:addItem(Rectangle:new("R_QuadRect"))
 		quadrect.mode = "line"
-		quadrect.dFillColor = {255,0,0,255}
+		quadrect.colorFill = {255,0,0,255}
 		quadrect:setPosition(178,36)
 		quadrect:setSize(1,1)
 		
@@ -1128,7 +1132,7 @@ function fillPage(page)
 			boffcent:setPosition(66,4)
 			boffcent:setSize(80,16)
 			function boffcent:click(b) 
-				if b=="l" then
+				if b == 1 then
 					local spox = gbtmoff:getItem("SP_TM_OffsetX")
 					local spoy = gbtmoff:getItem("SP_TM_OffsetY")
 					local img = uim:getItem("IC_Textures"):getItem(lbtex:getSelected())
@@ -1143,7 +1147,7 @@ function fillPage(page)
 			boffcentq:setSize(80,16)
 			boffcentq.active = false
 			function boffcentq:click(b)
-				if b == "l" then
+				if b == 1 then
 					local qlb = gbtexman:getItem("GB_QuadControl"):getItem("LB_TM_QuadList")
 					local qcol = page:getItem("C_Quads")
 					if gbtexman:getItem("CB_TM_UseQuads").checked == true then
@@ -1184,7 +1188,7 @@ function fillPage(page)
 		cbuseq.caption = "Use quads"
 		cbuseq:setPosition(4,372)
 		function cbuseq:click(b) 
-			if b=="l" then
+			if b == 1 then
 				gbtexman:getItem("GB_TM_Offset"):getItem("B_TM_Offset_CenterQuad").active = self.checked
 				if self.checked == false then
 					gbtexman:getItem("GB_QuadControl"):hide()
@@ -1286,7 +1290,7 @@ function fillPage(page)
 			bqadd:setPosition(4,64)
 			bqadd.caption = "Add"
 			function bqadd:click(b)
-				if b=="l" then
+				if b == 1 then
 					local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 					gbqctrl:getItem("LB_TM_QuadList"):addItem(qx.value..","..qy.value..","..qw.value..","..qh.value)
 					gbqctrl:getItem("LB_TM_QuadList"):last()
@@ -1300,7 +1304,7 @@ function fillPage(page)
 			bqrem:setPosition(56,64)
 			bqrem.caption = "Remove"
 			function bqrem:click(b)
-				if b == "l" then
+				if b == 1 then
 					local lbql = gbqctrl:getItem("LB_TM_QuadList")
 					local ql = page:getItem("C_Quads")
 					ql:deleteItem(lbql.index)
@@ -1318,7 +1322,7 @@ function fillPage(page)
 			bqset:setPosition(112,64)
 			bqset.caption = "Tex"
 			function bqset:click(b)
-				if b=="l" then
+				if b == 1 then
 					local qc = page:getItem("C_Quads")
 					local ql = gbqctrl:getItem("LB_TM_QuadList")
 					local tex = uim:getItem("IC_Textures"):getItem(gbtexman:getItem("LB_TextureList"):getSelected())
@@ -1332,7 +1336,7 @@ function fillPage(page)
 			lbqlist:setSize(156,176)
 			lbqlist:setPosition(4,96)
 			function lbqlist:click(b)
-				if b == "l" then
+				if b == 1 then
 					local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 					local quad = page:getItem("C_Quads"):getItem(lbqlist.index)
 					qx.value,qy.value,qw.value,qh.value = quad:getViewport()
@@ -1352,7 +1356,7 @@ function fillPage(page)
 		bgetcode.caption = "Code"
 		bgetcode:setSize(48,24)
 		function bgetcode:click(b) 
-			if b == "l" then
+			if b == 1 then
 				local em = page:getItem("ParticleEmitter").ps
 				local code = ""
 				code = code.."emitter = love.graphics.newParticleSystem(tex,"..em:getBufferSize()..")\n"
@@ -1418,16 +1422,15 @@ function fillPage(page)
 		bbmode.caption = "Blend mode"
 		bbmode:setSize(80,24)
 		bbmode:setPosition(54,4)
-		function bbmode:click(b) if b == "l" then if gbmisc:getItem("LB_BlendMode").visible == true then gbmisc:getItem("LB_BlendMode"):hide() else gbmisc:getItem("LB_BlendMode"):show() end end end
+		function bbmode:click(b) if b == 1 then if gbmisc:getItem("LB_BlendMode").visible == true then gbmisc:getItem("LB_BlendMode"):hide() else gbmisc:getItem("LB_BlendMode"):show() end end end
 		
 		local lbbmode = gbmisc:addItem(ListBox:new("LB_BlendMode"))
 		lbbmode:addItem(love.graphics.getBlendMode())
-		lbbmode:addItem("additive")
-		lbbmode:addItem("subtractive")
+		lbbmode:addItem("add")
+		lbbmode:addItem("subtract")
 		lbbmode:addItem("screen")
 		lbbmode:addItem("replace")
-		lbbmode:addItem("premultiplied")
-		lbbmode:addItem("multiplicative")
+		lbbmode:addItem("multiply")
 		lbbmode:setSize(128,128)
 		lbbmode:setPosition(168,-88)
 		function lbbmode:click(b)

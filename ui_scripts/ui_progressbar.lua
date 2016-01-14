@@ -12,7 +12,6 @@ ProgressBar.displayVal = true
 ProgressBar.updateable = true
 ProgressBar.leftCaption = false
 ProgressBar.asPercentage = false
-ProgressBar.colorHighlight = {192,192,192,128}
 ProgressBar.w = 128
 function ProgressBar:new()
 	local self = {}

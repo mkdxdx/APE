@@ -11,7 +11,6 @@ Button = {}
 Button.__index = Button
 Button.ident = "ui_button"
 Button.caption = "Button"
-Button.colorHighlight = {160,160,160,128}
 Button.name = "Button"
 Button.showBorder = false
 function Button:new(name)

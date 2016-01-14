@@ -68,6 +68,11 @@ function PageSwitch:keyreleased(key)
 	if c>0 then self.pages[self.index]:keyreleased(key,isrepeat) end
 end
 
+function PageSwitch:wheelmoved(x,y)
+	local c = #self.pages
+	if c>0 then self.pages[self.index]:wheelmoved(x,y) end
+end
+
 function PageSwitch:setPosition(x,y)
 	if self.isContainer == true then
 		local dx,dy = (x or self.x) - self.x, (y or self.y) - self.y 
@@ -90,13 +95,14 @@ function PageSwitch:addPage(pg)
 		table.insert(self.pages,pg)
 		self.index = indx
 		return pg
-	else	
+	elseif type(pg) == "string" or pg == nil then	
 		local indx = table.getn(self.pages)+1
 		local page = Page:new(pg or ("Page"..indx))
 		table.insert(self.pages,page)
 		self.index = indx
 		return page
 	end
+	
 end
 
 function PageSwitch:removePage(page)

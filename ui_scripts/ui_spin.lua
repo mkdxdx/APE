@@ -14,7 +14,6 @@ Spin.leftCaption = false
 Spin.w = 48
 Spin.h = 16
 Spin.caption = "Spin"
-Spin.colorHighlight = {160,160,160,128}
 Spin.name = "Spin"
 Spin.caption_xpad = -4
 Spin.caption_ypad = 0
@@ -41,17 +40,24 @@ end
 setmetatable(Spin,{__index = UIElement})
 
 function Spin:click(b)
-	if b == "wu" then
-		self:increment()
-		self:changeValue()
-	elseif b == "wd" then
-		self:decrement()
-		self:changeValue()
-	elseif b == "l" then
+	if b == 1 then
 		self.isHeld = true	
 		local mx,my = mouse.getPosition()
 		if self:isMouseOver() then
 			if mx>=self.x+self.w/2 then self:increment() else self:decrement() end
+			self:changeValue()
+		end
+	end
+end
+
+function Spin:wheelmoved(x,y)
+	local mx,my = love.mouse.getPosition()
+	if self:isMouseOver(mx,my) then
+		if y > 0 then
+			self:increment()
+			self:changeValue()
+		elseif y < 0 then
+			self:decrement()
 			self:changeValue()
 		end
 	end
@@ -71,7 +77,7 @@ function Spin:update(dt)
 end
 
 function Spin:unclick(b)
-	if b == "l" then
+	if b == 1 then
 		self.isHeld = false
 		self.held_timer = 0
 	end
