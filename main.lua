@@ -15,14 +15,19 @@ local l_gfx = love.graphics
 ui_scrdir = "ui_scripts/"
 require(ui_scrdir.."ui")
 
+
 function love.load()
 	love.window.setTitle("APE for LÖVE2D by cval")
+	l_gfx.setFont(l_gfx.newFont(12))
 	uim = UIManager:new()
+	UIElement.colorFill = {48,48,48,255}
+	UIElement.colorHardFill = {80,80,80,255}
+	UIElement.colorDisabledFill = {16,16,16,255}
+	UIElement.colorHighlight = {96,96,96,255}
 	local deftexID = love.image.newImageData(1,1)
 	deftexID:setPixel(0,0,255,255,255)
 	local ic = uim:addItem(ImageCollection:new("IC_Textures"))
 	ic:addItem(deftexID,"default")
-	
 	local pgs = uim:addItem(PageSwitch:new("Scene"))
 	local pgsc = uim:addItem(PageSwitchController:new("PSController"))
 	pgsc:setPageSwitch(pgs)
@@ -78,7 +83,6 @@ function fillPage(page)
 	vertline.y = 2
 	
 	
-	
 	local tex = uim:getItem("IC_Textures"):getItem("default")
 	local emitter = page:addItem(ParticleEmitter:new("ParticleEmitter",tex))
 	emitter.ps:moveTo(love.graphics.getWidth()/2+224,love.graphics.getHeight()/2)
@@ -126,6 +130,7 @@ function fillPage(page)
 	bsspin.leftCaption = true
 	bsspin:setPosition(56,8)
 	bsspin.max = nil
+	bsspin.maxdec = 0 
 	bsspin.min = 1
 	bsspin.value = 10
 	bsspin.allowMult = true
@@ -138,6 +143,7 @@ function fillPage(page)
 	spdir:setPosition(184,8)
 	spdir.max = nil
 	spdir.min = nil
+	spdir.maxdec = 2
 	spdir.value = 0
 	spdir.step = 0.1
 	spdir.allowMult = true
@@ -155,7 +161,6 @@ function fillPage(page)
 	gb_distr:setPosition(8,48)
 	gb_distr.w = 224
 	gb_distr.h = 56
-	
 	
 		local rbdn = gb_distr:addItem(RadioButton:new("RB_Distr_None"))
 		rbdn.caption = "none"
@@ -233,6 +238,7 @@ function fillPage(page)
 		spdistrx:setPosition(gb_distr.x+56,gb_distr.y+32)
 		spdistrx.min = 1
 		spdistrx.value = 1
+		spdistrx.maxdec = 0
 		spdistrx.max = nil
 		spdistrx.leftCaption = true
 		spdistrx.caption = "X"
@@ -254,6 +260,7 @@ function fillPage(page)
 		spdistry:setPosition(gb_distr.x+148,gb_distr.y+32)
 		spdistry.min = 1
 		spdistry.value = 1
+		spdistry.maxdec = 0
 		spdistry.max = nil
 		spdistry.leftCaption = true
 		spdistry.caption = "Y"
@@ -278,6 +285,7 @@ function fillPage(page)
 	
 	local sperate = page:addItem(Spin:new("SP_ERate"))
 	sperate:setPosition(116,112)
+	sperate.maxdec = 1
 	sperate.leftCaption = true
 	sperate.caption = "Emission rate:"
 	sperate.min = 0
@@ -289,6 +297,7 @@ function fillPage(page)
 	
 	local spemlt = page:addItem(Spin:new("SP_EmLifetime"))
 	spemlt:setPosition(116,132)
+	spemlt.maxdec = 1
 	spemlt.leftCaption = true
 	spemlt.caption = "Emitter lifetime:"
 	spemlt.min = -1
@@ -438,6 +447,8 @@ function fillPage(page)
 		sprotmin:setPosition(32,4)
 		sprotmin.allowMult = true
 		sprotmin.caption = "min"
+		sprotmin.step = 0.1
+		sprotmin.maxdec = 2
 		sprotmin.leftCaption = true
 		function sprotmin:changeValue()
 			page:getItem("ParticleEmitter").ps:setRotation(gbrot:getItem("SP_Rotation_Min").value,gbrot:getItem("SP_Rotation_Max").value)
@@ -446,6 +457,8 @@ function fillPage(page)
 		local sprotmax = gbrot:addItem(Spin:new("SP_Rotation_Max"))
 		sprotmax:setPosition(32,22)
 		sprotmax.allowMult = true
+		sprotmax.step = 0.1
+		sprotmax.maxdec = 2
 		sprotmax.leftCaption = true
 		sprotmax.caption = "max"
 		function sprotmax:changeValue()
@@ -534,6 +547,7 @@ function fillPage(page)
 	spspvar:setPosition(56,444)
 	spspvar.caption = "Spin v."
 	spspvar.step = 0.1
+	spspvar.maxdec = 2
 	spspvar.min = 0
 	spspvar.max = 1
 	spspvar.allowMult = true
@@ -544,6 +558,7 @@ function fillPage(page)
 	spspread:setPosition(180,444)
 	spspread.caption = "Spread"
 	spspread.step = 0.1
+	spspread.maxdec = 2
 	spspread.min = 0
 	spspread.max = 6.28
 	spspread.allowMult = true
@@ -609,151 +624,177 @@ function fillPage(page)
 		spsrange:setPosition(56,4)
 		spsrange:setSize(24,16)
 		spsrange.max = 8
+		spsrange.maxdec = 0
 		spsrange.min = 1
 		spsrange.value = 1
+		
 		
 		local spszvar = gbsizes:addItem(Spin:new("SP_Size_Var"))
 		spszvar.caption = "Var."
 		spszvar.max = 1
+		spszvar.maxdec = 2
 		spszvar.min = 0
 		spszvar.leftCaption = true
+		spszvar.allowMult = true
 		spszvar.step = 0.1
 		spszvar:setPosition(188,4)
 		spszvar:setSize(32,16)
-		function spszvar:changeValue()	page:getItem("ParticleEmitter").ps:setSizeVariation(spszvar.value)	end
+		function spszvar:changeValue()	page:getItem("ParticleEmitter").ps:setSizeVariation(self.value)	end
 		
-		local spsvalue = gbsizes:addItem(Spin:new("SP_Size_Value"))
-		spsvalue.caption = "Size:"
-		spsvalue.leftCaption = true
-		spsvalue:setPosition(120,4)
-		spsvalue:setSize(32,16)
-		spsvalue.max = nil
-		spsvalue.min = nil
-		spsvalue.value = 1
-		spsvalue.allowMult = true
+		local spsz8 = gbsizes:addItem(Spin:new("SP_Size_8"))
+		local spsz7 = gbsizes:addItem(Spin:new("SP_Size_7"))
+		local spsz6 = gbsizes:addItem(Spin:new("SP_Size_6"))
+		local spsz5 = gbsizes:addItem(Spin:new("SP_Size_5"))
+		local spsz4 = gbsizes:addItem(Spin:new("SP_Size_4"))
+		local spsz3 = gbsizes:addItem(Spin:new("SP_Size_3"))
+		local spsz2 = gbsizes:addItem(Spin:new("SP_Size_2"))
+		local spsz1 = gbsizes:addItem(Spin:new("SP_Size_1"))
+		local szspins = {spsz1,spsz2,spsz3,spsz4,spsz5,spsz6,spsz7,spsz8}
 		
-		
-		
-		local rbsz1 = gbsizes:addItem(RadioButton:new("RB_Size_1"))
-		rbsz1.buttonStyle = true
-		rbsz1:setSize(24,16)
-		rbsz1.caption = "1"
-		rbsz1:setPosition(8,28)
-		rbsz1.checked = true
-		function rbsz1:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz1.group[rbsz1:getGroupIndex()].caption)
+		spsz1:setSize(24,16)
+		spsz1.caption = ""
+		spsz1:setPosition(8,28)
+		spsz1.step = 0.1
+		spsz1.value = 1
+		spsz1.allowMult = true
+		spsz1.max = nil
+		spsz1.min = nil
+		function spsz1:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz2 = gbsizes:addItem(RadioButton:new("RB_Size_2"))
-		rbsz2.buttonStyle = true
-		rbsz2:setSize(24,16)
-		rbsz2.caption = "1"
-		rbsz2:setPosition(33,28)
-		function rbsz2:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz2.group[rbsz2:getGroupIndex()].caption)
+		spsz2:setSize(24,16)
+		spsz2.caption = ""
+		spsz2:setPosition(spsz1.x+spsz1.w+2,spsz1.y)
+		spsz2.step = 0.1
+		spsz2.value = 1
+		spsz2.allowMult = true
+		spsz2.max = nil
+		spsz2.min = nil
+		spsz2.active = false
+		function spsz2:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz3 = gbsizes:addItem(RadioButton:new("RB_Size_3"))
-		rbsz3.buttonStyle = true
-		rbsz3:setSize(24,16)
-		rbsz3.caption = "1"
-		rbsz3:setPosition(58,28)
-		function rbsz3:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz3.group[rbsz3:getGroupIndex()].caption)
+		spsz3:setSize(24,16)
+		spsz3.caption = ""
+		spsz3:setPosition(spsz2.x+spsz2.w+2,spsz2.y)
+		spsz3.step = 0.1
+		spsz3.value = 1
+		spsz3.allowMult = true
+		spsz3.max = nil
+		spsz3.min = nil
+		spsz3.active = false
+		function spsz3:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz4 = gbsizes:addItem(RadioButton:new("RB_Size_4"))
-		rbsz4.buttonStyle = true
-		rbsz4:setSize(24,16)
-		rbsz4.caption = "1"
-		rbsz4:setPosition(83,28)
-		function rbsz4:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz4.group[rbsz4:getGroupIndex()].caption)
+		spsz4:setSize(24,16)
+		spsz4.caption = ""
+		spsz4:setPosition(spsz3.x+spsz3.w+2,spsz3.y)
+		spsz4.step = 0.1
+		spsz4.value = 1
+		spsz4.allowMult = true
+		spsz4.max = nil
+		spsz4.min = nil
+		spsz4.active = false
+		function spsz4:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz5 = gbsizes:addItem(RadioButton:new("RB_Size_5"))
-		rbsz5.buttonStyle = true
-		rbsz5:setSize(24,16)
-		rbsz5.caption = "1"
-		rbsz5:setPosition(108,28)
-		function rbsz5:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz5.group[rbsz5:getGroupIndex()].caption)
+		spsz5:setSize(24,16)
+		spsz5.caption = ""
+		spsz5:setPosition(spsz4.x+spsz4.w+2,spsz3.y)
+		spsz5.step = 0.1
+		spsz5.value = 1
+		spsz5.allowMult = true
+		spsz5.max = nil
+		spsz5.min = nil
+		spsz5.active = false
+		function spsz5:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz6 = gbsizes:addItem(RadioButton:new("RB_Size_6"))
-		rbsz6.buttonStyle = true
-		rbsz6:setSize(24,16)
-		rbsz6.caption = "1"
-		rbsz6:setPosition(133,28)
-		function rbsz6:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz6.group[rbsz6:getGroupIndex()].caption)
+		spsz6:setSize(24,16)
+		spsz6.caption = ""
+		spsz6:setPosition(spsz5.x+spsz5.w+2,spsz5.y)
+		spsz6.step = 0.1
+		spsz6.allowMult = true
+		spsz6.max = nil
+		spsz6.value = 1
+		spsz6.min = nil
+		spsz6.active = false
+		function spsz6:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz7 = gbsizes:addItem(RadioButton:new("RB_Size_7"))
-		rbsz7.buttonStyle = true
-		rbsz7:setSize(24,16)
-		rbsz7.caption = "1"
-		rbsz7:setPosition(158,28)
-		function rbsz7:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz7.group[rbsz7:getGroupIndex()].caption)
+		spsz7:setSize(24,16)
+		spsz7.caption = ""
+		spsz7:setPosition(spsz6.x+spsz6.w+2,spsz6.y)
+		spsz7.step = 0.1
+		spsz7.allowMult = true
+		spsz7.max = nil
+		spsz7.value = 1
+		spsz7.min = nil
+		spsz7.active = false
+		function spsz7:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
-		local rbsz8 = gbsizes:addItem(RadioButton:new("RB_Size_8"))
-		rbsz8.buttonStyle = true
-		rbsz8:setSize(24,16)
-		rbsz8.caption = "1"
-		rbsz8:setPosition(183,28)
-		function rbsz8:click(b) 
-			if b == 1 then 
-				local val = page:getItem("GB_Size_Selector"):getItem("SP_Size_Value")
-				val.value = tonumber(rbsz8.group[rbsz8:getGroupIndex()].caption)
+		spsz8:setSize(24,16)
+		spsz8.caption = ""
+		spsz8:setPosition(spsz7.x+spsz7.w+2,spsz7.y)
+		spsz8.step = 0.1
+		spsz8.value = 1
+		spsz8.allowMult = true
+		spsz8.max = nil
+		spsz8.min = nil
+		spsz8.active = false
+		function spsz8:changeValue() 
+			local szarr = {}
+			for i=1,spsrange.value do
+				szarr[i] = szspins[i].value
 			end
-		end
-		
-		local rbszgr = {rbsz1,rbsz2,rbsz3,rbsz4,rbsz5,rbsz6,rbsz7,rbsz8}
-		for i=1,8 do 
-			rbszgr[i]:setGroup(rbszgr)
-			if i>1 then rbszgr[i].active = false end
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 		
 		function spsrange:changeValue()
-			local szapp = {}
+			local szarr = {}
 			for i=1,8 do
-				if i<=spsrange.value then rbszgr[i].active = true szapp[i] = tonumber(rbszgr[i].caption) else rbszgr[i].active = false end
+				szspins[i].active = (i<=self.value)
+				if i<=self.value then
+					szarr[i] = szspins[i].value
+				end
 			end
-			page:getItem("ParticleEmitter").ps:setSizes(unpack(szapp))
-		end
-		
-		function spsvalue:changeValue()
-			local rb = page:getItem("GB_Size_Selector"):getItem("RB_Size_1")
-			rb.group[rb:getGroupIndex()].caption = spsvalue.value
-			local szapp = {}
-			local spsrange = gbsizes:getItem("SP_Size_Range")
-			for i=1,8 do
-				if i<=spsrange.value then rbszgr[i].active = true szapp[i] = tonumber(rbszgr[i].caption) else rbszgr[i].active = false end
-			end
-			page:getItem("ParticleEmitter").ps:setSizes(unpack(szapp))
+			page:getItem("ParticleEmitter").ps:setSizes(unpack(szarr))
 		end
 	gbsizes:setPosition(8,548)
 	
@@ -766,6 +807,7 @@ function fillPage(page)
 		local spcrange = gbcolors:addItem(Spin:new("SP_Color_Range"))
 		spcrange.caption = "Range:"
 		spcrange.leftCaption = true
+		spcrange.maxdec = 0
 		spcrange:setPosition(56,4)
 		spcrange:setSize(28,16)
 		spcrange.max = 8
@@ -774,6 +816,7 @@ function fillPage(page)
 		
 		local spcvala = gbcolors:addItem(Spin:new("SP_Color_ValA"))
 		spcvala.caption = ""
+		spcvala.maxdec = 0
 		spcvala.leftCaption = true
 		spcvala:setPosition(188,4)
 		spcvala:setSize(32,16)
@@ -786,6 +829,7 @@ function fillPage(page)
 		local spcvalb = gbcolors:addItem(Spin:new("SP_Color_ValB"))
 		spcvalb.caption = ""
 		spcvalb.leftCaption = true
+		spcvalb.maxdec = 0
 		spcvalb:setPosition(154,4)
 		spcvalb:setSize(32,16)
 		spcvalb.max = 255
@@ -797,6 +841,7 @@ function fillPage(page)
 		local spcvalg = gbcolors:addItem(Spin:new("SP_Color_ValG"))
 		spcvalg.caption = ""
 		spcvalg.leftCaption = true
+		spcvalg.maxdec = 0
 		spcvalg:setPosition(120,4)
 		spcvalg:setSize(32,16)
 		spcvalg.max = 255
@@ -808,6 +853,7 @@ function fillPage(page)
 		local spcvalr = gbcolors:addItem(Spin:new("SP_Color_ValR"))
 		spcvalr.caption = ""
 		spcvalr.leftCaption = true
+		spcvalr.maxdec = 0
 		spcvalr:setPosition(86,4)
 		spcvalr:setSize(32,16)
 		spcvalr.max = 255
@@ -1162,6 +1208,7 @@ function fillPage(page)
 			
 			local spoffx = gbtmoff:addItem(Spin:new("SP_TM_OffsetX"))
 			spoffx.caption = "X"
+			
 			spoffx.leftCaption = true
 			spoffx.allowMult = true
 			spoffx:setPosition(16,4)
@@ -1220,13 +1267,15 @@ function fillPage(page)
 				local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 				local cquads = page:getItem("C_Quads")
 				local qlb = gbqctrl:getItem("LB_TM_QuadList")
-				cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
-				page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
-				local str = qx.value..","..qy.value..","..qw.value..","..qh.value
-				qlb:setItemValue(qlb.index,str)
-				local qr = gbtexman:getItem("R_QuadRect")
-				qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
-				qr:setSize(qw.value,qh.value)
+				if #qlb.items>0 then
+					cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
+					page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
+					local str = qx.value..","..qy.value..","..qw.value..","..qh.value
+					qlb:setItemValue(qlb.index,str)
+					local qr = gbtexman:getItem("R_QuadRect")
+					qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
+					qr:setSize(qw.value,qh.value)
+				end
 			end
 			
 			local spqvpy = gbqctrl:addItem(Spin:new("SP_QViewport_Y"))
@@ -1238,18 +1287,21 @@ function fillPage(page)
 				local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 				local cquads = page:getItem("C_Quads")
 				local qlb = gbqctrl:getItem("LB_TM_QuadList")
-				cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
-				page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
-				local str = qx.value..","..qy.value..","..qw.value..","..qh.value
-				qlb:setItemValue(qlb.index,str)
-				local qr = gbtexman:getItem("R_QuadRect")
-				qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
-				qr:setSize(qw.value,qh.value)
+				if #qlb.items>0 then
+					cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
+					page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
+					local str = qx.value..","..qy.value..","..qw.value..","..qh.value
+					qlb:setItemValue(qlb.index,str)
+					local qr = gbtexman:getItem("R_QuadRect")
+					qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
+					qr:setSize(qw.value,qh.value)
+				end
 			end
 			
 			
 			local spqvpw = gbqctrl:addItem(Spin:new("SP_QViewport_W"))
 			spqvpw.caption = "W"
+			spqvpw.maxdec = 0
 			spqvpw.leftCaption = true
 			spqvpw.allowMult = true
 			spqvpw:setPosition(96,24)
@@ -1257,31 +1309,36 @@ function fillPage(page)
 				local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 				local cquads = page:getItem("C_Quads")
 				local qlb = gbqctrl:getItem("LB_TM_QuadList")
-				cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
-				page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
-				local str = qx.value..","..qy.value..","..qw.value..","..qh.value
-				qlb:setItemValue(qlb.index,str)
-				local qr = gbtexman:getItem("R_QuadRect")
-				qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
-				qr:setSize(qw.value,qh.value)
+				if #qlb.items>0 then
+					cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
+					page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
+					local str = qx.value..","..qy.value..","..qw.value..","..qh.value
+					qlb:setItemValue(qlb.index,str)
+					local qr = gbtexman:getItem("R_QuadRect")
+					qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
+					qr:setSize(qw.value,qh.value)
+				end
 			end
 			
 			local spqvph = gbqctrl:addItem(Spin:new("SP_QViewport_H"))
 			spqvph.caption = "H"
 			spqvph.leftCaption = true
+			spqvph.maxdec = 0
 			spqvph.allowMult = true
 			spqvph:setPosition(96,42)
 			function spqvph:changeValue()
 				local qx,qy,qw,qh = gbqctrl:getItem("SP_QViewport_X"),gbqctrl:getItem("SP_QViewport_Y"),gbqctrl:getItem("SP_QViewport_W"),gbqctrl:getItem("SP_QViewport_H")
 				local cquads = page:getItem("C_Quads")
 				local qlb = gbqctrl:getItem("LB_TM_QuadList")
-				cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
-				page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
-				local str = qx.value..","..qy.value..","..qw.value..","..qh.value
-				qlb:setItemValue(qlb.index,str)
-				local qr = gbtexman:getItem("R_QuadRect")
-				qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
-				qr:setSize(qw.value,qh.value)
+				if #qlb.items>0 then
+					cquads:getItem(qlb.index):setViewport(qx.value,qy.value,qw.value,qh.value)
+					page:getItem("ParticleEmitter").ps:setQuads(unpack(cquads.items))
+					local str = qx.value..","..qy.value..","..qw.value..","..qh.value
+					qlb:setItemValue(qlb.index,str)
+					local qr = gbtexman:getItem("R_QuadRect")
+					qr:setPosition(gbtexman:getItem("IM_TM_Texture").x+qx.value,gbtexman:getItem("IM_TM_Texture").y+qy.value)
+					qr:setSize(qw.value,qh.value)
+				end
 			end
 			
 			
@@ -1349,10 +1406,17 @@ function fillPage(page)
 	
 	local gbmisc = page:addItem(GroupBox:new("GB_Misc"))
 	gbmisc.caption = "Miscellaneous"
-	gbmisc:setSize(138,32)
+	gbmisc:setSize(160,32)
+		
+		local codelabel = gbmisc:addItem(Label:new("L_Codelist"))
+		codelabel:setPosition(gbmisc.w+32,gbmisc.y-384)
+		codelabel:setSize(512,512)
+		codelabel.align = "left"
+		codelabel.caption = "No code generated\nPress \"Code\" button to generate it and copy to clipboard"
+		codelabel.visible = false
 		
 		local bgetcode = gbmisc:addItem(Button:new("B_GetCode"))
-		bgetcode:setPosition(4,4)
+		bgetcode:setPosition(86,4)
 		bgetcode.caption = "Code"
 		bgetcode:setSize(48,24)
 		function bgetcode:click(b) 
@@ -1388,7 +1452,7 @@ function fillPage(page)
 				code = code.."emitter:setOffset("..ox..","..oy..")\n"
 				local sizes = ""
 				for i=1,spsrange.value do
-					sizes = sizes..rbszgr[i].caption
+					sizes = sizes..szspins[i].value
 					if i~=spsrange.value then sizes = sizes.."," end
 				end
 				code = code.."emitter:setSizes("..sizes..")\n"
@@ -1415,13 +1479,22 @@ function fillPage(page)
 					code = code.."emitter:setQuads("..qvarlist..")".."\n"
 				end
 				love.system.setClipboardText(code)
+				codelabel.caption = code
 			end
 		end
+		
+		local bshowcode = gbmisc:addItem(CheckBox:new("B_ShowCode"))
+		bshowcode.buttonStyle = true
+		bshowcode.checked = false
+		bshowcode:setPosition(bgetcode.x+bgetcode.w+2,bgetcode.y)
+		bshowcode:setSize(20,24)
+		bshowcode.caption = ">"
+		function bshowcode:click(b) if b == 1 then codelabel.visible = self.checked end end
 		
 		local bbmode = gbmisc:addItem(Button:new("B_ShowBlendMode"))
 		bbmode.caption = "Blend mode"
 		bbmode:setSize(80,24)
-		bbmode:setPosition(54,4)
+		bbmode:setPosition(4,4)
 		function bbmode:click(b) if b == 1 then if gbmisc:getItem("LB_BlendMode").visible == true then gbmisc:getItem("LB_BlendMode"):hide() else gbmisc:getItem("LB_BlendMode"):show() end end end
 		
 		local lbbmode = gbmisc:addItem(ListBox:new("LB_BlendMode"))

@@ -1,5 +1,7 @@
 local l_gfx = love.graphics
 local mouse = love.mouse
+local tostring = tostring
+local format = string.format
 -- this is a spin element
 -- currently it's only way of control is by mousewheel, wheelup increases the value by a step, wheeldown decreases
 -- it also has mutlipliers, like precise multiplier, base multiplier, coarse and turbo multipliers
@@ -18,6 +20,7 @@ Spin.name = "Spin"
 Spin.caption_xpad = -4
 Spin.caption_ypad = 0
 Spin.updateable = true
+Spin.maxdec = 1
 function Spin:new(name)
 	local self = {}
 	setmetatable(self,Spin)
@@ -123,32 +126,50 @@ end
 
 function Spin:draw()
 	local cr,cg,cb,ca = love.graphics.getColor()
+	local dynwidth = self.w
+	local deccnt = self.maxdec
+	local v = format("%."..deccnt.."f",self.value)	
+	if self:isMouseOver() == true then
+		if dynwidth<l_gfx.getFont():getWidth(tostring(v)) then
+			dynwidth = l_gfx.getFont():getWidth(tostring(v)) + 2
+		end
+	end
+	if self.active == true then
+		l_gfx.setColor(self.colorFill)
+	else
+		l_gfx.setColor(self.colorDisabledFill)
+	end
+	l_gfx.rectangle("fill",self.x,self.y,dynwidth,self.h)
 	if self:isMouseOver() == true then
 		local mx,my = mouse:getPosition()
-		l_gfx.setColor(self.colorHardFill)
-		if mx>=self.x+self.w/2 then 
-			l_gfx.rectangle("fill",self.x+self.w/2,self.y,self.w/2,self.h)
+		l_gfx.setColor(self.colorHighlight)
+		if mx>=self.x+dynwidth/2 then 
+			l_gfx.rectangle("fill",self.x+dynwidth/2,self.y,dynwidth/2,self.h)
 		else
-			l_gfx.rectangle("fill",self.x,self.y,self.w/2,self.h)
+			l_gfx.rectangle("fill",self.x,self.y,dynwidth/2,self.h)
 		end
 		if self.displMult == true then
 			local str = "x"..self.step_mult*self.step
-			
-			l_gfx.rectangle("fill",self.x+self.w+2,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str)+2,14)
+			l_gfx.setColor(self.colorFill)
+			l_gfx.rectangle("fill",self.x+dynwidth,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str)+2,14)
+			l_gfx.setColor(self.colorHighlight)
+			l_gfx.rectangle("line",self.x+dynwidth,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str),14)
 			l_gfx.setColor(self.colorFont)
-			l_gfx.rectangle("line",self.x+self.w+2,self.y+(self.h/2-7),l_gfx.getFont():getWidth(str),14)
-			l_gfx.setColor(self.colorFont)
-			l_gfx.print(str,self.x+self.w+2,self.y+(self.h/2-7))
+			l_gfx.print(str,self.x+dynwidth,self.y+(self.h/2-7))
 		end
-		l_gfx.setColor(self.colorHighlight)
-	else
 		l_gfx.setColor(self.colorFill)
+	else
+		
 	end
-	l_gfx.rectangle("fill",self.x,self.y,self.w,self.h)
+	
 	l_gfx.setColor(self.colorFont)
-	local v = self.value
+	while l_gfx.getFont():getWidth(tostring(v))>=dynwidth do
+		deccnt = deccnt - 1
+		if deccnt<0 then v = "..." break end
+		v = format("%."..deccnt.."f",self.value)
+	end
 	local sh = self.h/2-7
-	l_gfx.printf(v,self.x,self.y+sh,self.w,"center")
+	l_gfx.printf(v,self.x,self.y+sh,dynwidth,"center")
 	if self.leftCaption == true then
 		l_gfx.print(self.caption,self.x-l_gfx:getFont():getWidth(self.caption)+self.caption_xpad,self.y+(self.h/2-7)+self.caption_ypad)
 	else
