@@ -274,7 +274,7 @@ function fillPage(page)
 	btstart:setPosition(168,112)
 	btstart.caption = "START"
 	btstart:setSize(64,36)
-	function btstart:click(b) if b == "l" then page:getItem("ParticleEmitter").ps:start() end end
+	function btstart:click(b) if b == 1 then page:getItem("ParticleEmitter").ps:start() end end
 	
 	local sperate = page:addItem(Spin:new("SP_ERate"))
 	sperate:setPosition(116,112)
@@ -560,12 +560,12 @@ function fillPage(page)
 	local cbrelrot = page:addItem(CheckBox:new("CB_RelativeRotation"))
 	cbrelrot.caption = "Rel. rotation"
 	cbrelrot:setPosition(8,468)
-	function cbrelrot:click(b) if b == "l" then page:getItem("ParticleEmitter").ps:setRelativeRotation(cbrelrot.checked) end end
+	function cbrelrot:click(b) if b == 1 then page:getItem("ParticleEmitter").ps:setRelativeRotation(cbrelrot.checked) end end
 	
 	local cbfmouse = page:addItem(CheckBox:new("CB_FollowMouse"))
 	cbfmouse.caption = "Follow mouse"
 	cbfmouse:setPosition(128,468)
-	function cbfmouse:click(b) if b == "l" then page:getItem("ParticleEmitter").followMouse = cbfmouse.checked if cbfmouse.checked == false then
+	function cbfmouse:click(b) if b == 1 then page:getItem("ParticleEmitter").followMouse = cbfmouse.checked if cbfmouse.checked == false then
 		page:getItem("ParticleEmitter").ps:moveTo(love.graphics.getWidth()/2+224,love.graphics.getHeight()/2) end
 	end end
 	
@@ -579,21 +579,21 @@ function fillPage(page)
 		rbimtop.buttonStyle = true
 		rbimtop:setSize(64,16)
 		rbimtop.checked = true
-		function rbimtop:click(b) if b == "l" then page:getItem("ParticleEmitter").ps:setInsertMode(rbimtop.group[rbimtop:getGroupIndex()].caption) end end
+		function rbimtop:click(b) if b == 1 then page:getItem("ParticleEmitter").ps:setInsertMode(rbimtop.group[rbimtop:getGroupIndex()].caption) end end
 		
 		local rbimbot = gbimode:addItem(RadioButton:new("RB_IM_Bottom"))
 		rbimbot:setPosition(80,4)
 		rbimbot.caption = "bottom"
 		rbimbot.buttonStyle = true
 		rbimbot:setSize(64,16)
-		function rbimbot:click(b) if b == "l" then page:getItem("ParticleEmitter").ps:setInsertMode(rbimbot.group[rbimbot:getGroupIndex()].caption) end end
+		function rbimbot:click(b) if b == 1 then page:getItem("ParticleEmitter").ps:setInsertMode(rbimbot.group[rbimbot:getGroupIndex()].caption) end end
 		
 		local rbimrnd = gbimode:addItem(RadioButton:new("RB_IM_Random"))
 		rbimrnd:setPosition(156,4)
 		rbimrnd.caption = "random"
 		rbimrnd.buttonStyle = true
 		rbimrnd:setSize(64,16)
-		function rbimrnd:click(b) if b == "l" then page:getItem("ParticleEmitter").ps:setInsertMode(rbimrnd.group[rbimrnd:getGroupIndex()].caption) end end
+		function rbimrnd:click(b) if b == 1 then page:getItem("ParticleEmitter").ps:setInsertMode(rbimrnd.group[rbimrnd:getGroupIndex()].caption) end end
 		local imgroup = {rbimtop,rbimbot,rbimrnd}
 		for i=1,3 do imgroup[i]:setGroup(imgroup) end
 		gbimode:setPosition(8,504)
@@ -1038,7 +1038,7 @@ function fillPage(page)
 	btexman.caption = "Texture manager"
 	btexman:setSize(112,54)
 	btexman:setPosition(120,670)
-	function btexman:click(b) if b=="l" then local tm = page:getItem("GB_Tex_Manager") if tm.visible == true then tm:hide() else tm:show() end end end
+	function btexman:click(b) if b==1 then local tm = page:getItem("GB_Tex_Manager") if tm.visible == true then tm:hide() else tm:show() end end end
 	
 	local gbtexman = page:addItem(GroupBox:new("GB_Tex_Manager"))
 	gbtexman.caption = "Texture manager"
@@ -1068,7 +1068,7 @@ function fillPage(page)
 			gbqc:getItem("SP_QViewport_H").value = qh
 			gbqc:getItem("SP_QViewport_X"):changeValue()
 			local offs = gbtexman:getItem("GB_TM_Offset")
-			offs:getItem("B_TM_Offset_CenterImage"):click("l")
+			offs:getItem("B_TM_Offset_CenterImage"):click(1)
 			end	
 		end
 		
