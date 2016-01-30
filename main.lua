@@ -1467,7 +1467,7 @@ function fillPage(page)
 				end
 				code = code.."emitter:setColors("..colors..")\n"
 				if cbuseq.checked == true and #lbqlist.items>0 then
-					local texw,texh = em:getImage():getWidth(),em:getImage():getHeight()
+					local texw,texh = em:getTexture():getWidth(),em:getTexture():getHeight()
 					local qlist = ""
 					local qvarlist = ""
 					for i=1,#lbqlist.items do 
