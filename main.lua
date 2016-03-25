@@ -183,11 +183,14 @@ local function loadparticle( filename, uim, em, page )
 	gbsizes:getItem("SP_Size_Var").value = particle["sizevariation"]
 	local sizes = {}
 	for i=1,8 do
+		local spsz = gbsizes:getItem("SP_Size_" .. tostring(i))
 		if i <= particle['sizesrange'] then
-			gbsizes:getItem("SP_Size_" .. tostring(i)).value = particle["sizes"][tostring(i)]
+			spsz.value = particle["sizes"][tostring(i)]
+			spsz.active = true
 			sizes[i] = particle["sizes"][tostring(i)]
 		else
-			gbsizes:getItem("SP_Size_" .. tostring(i)).value = 1.0
+			spsz.value = 1.0
+			spsz.active = false
 			sizes[i] = 1.0
 		end
 	end
@@ -198,8 +201,9 @@ local function loadparticle( filename, uim, em, page )
 	gbcolors:getItem("SP_Color_Range").value = particle["colorsrange"]
 	local clapp = {}
 	for i=1,8 do
+		local rbcl = gbcolors:getItem("RB_Color" .. tostring(i))
+		if i == 1 then rbcl.checked = true end
 		if i <= particle["colorsrange"] then
-			local rbcl = gbcolors:getItem("RB_Color" .. tostring(i))
 			local cl = {}
 			for j=1,4 do
 				--print(j, particle["colors"][tostring(i)][tostring(j)])
@@ -210,7 +214,6 @@ local function loadparticle( filename, uim, em, page )
 			
 			rbcl.active = true
 		else
-			local rbcl = gbcolors:getItem("RB_Color" .. tostring(i))
 			for j=1,4 do
 				rbcl.group[i].color[j] = 255
 			end
