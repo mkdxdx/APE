@@ -4,4 +4,7 @@ function love.conf(t)
 	t.window.fullscreen = false
 	t.window.vsync = true
 	t.modules.joystick = false
+	t.title = "ape"
+	t.identity = "ape"
+	t.console = false
 end
