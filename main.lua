@@ -28,68 +28,70 @@ end
 -- If the Screenshots folder does not exist, it will attempt to create it.
 local function saveparticle( em, spsrange, spcrange, szspins, rbclgr, cbuseq, gbtexman, lbbmode, gbimode )
 	-----------------------------------------------------------------------
-	local particledump = { particle = {} }
-	particledump.particle['buffersize'] = em:getBufferSize()
-	particledump.particle['direction'] = em:getDirection()
-	local as,asx,asy = em:getAreaSpread()
-	particledump.particle['areaspread'] = { as=as, asx=asx, asy=asy }
-	particledump.particle['emissionrate'] = em:getEmissionRate()
-	particledump.particle['emitterlifetime'] = em:getEmitterLifetime()
-	local pttlmin,pttlmax = em:getParticleLifetime()
-	particledump.particle['particlelifetime'] = { pttlmin=pttlmin,pttlmax=pttlmax }
-	local elaxmin,elaymin,elaxmax,elaymax = em:getLinearAcceleration()
-	particledump.particle['linearacceleration'] = { elaxmin=elaxmin,elaymin=elaymin,elaxmax=elaxmax,elaymax=elaymax }
-	local praccmin,praccmax = em:getRadialAcceleration()
-	particledump.particle['radialacceleration'] = { praccmin=praccmin,praccmax=praccmax }
-	local protmin,protmax = em:getRotation()
-	particledump.particle['rotation'] = { protmin=protmin,protmax=protmax }
-	local ptgamin,ptgamax = em:getTangentialAcceleration()
-	particledump.particle['tangentialacceleration'] = { ptgamin=ptgamin,ptgamax=ptgamax }
-	local pspdmin,pspdmax = em:getSpeed()
-	particledump.particle['speed'] = { pspdmin=pspdmin,pspdmax=pspdmax }
-	local pspinmin,pspinmax = em:getSpin()
-	particledump.particle['spin'] = { pspinmin=pspinmin,pspinmax=pspinmax }
-	particledump.particle['spinvariation'] = em:getSpinVariation()
-	local pldmin,pldmax = em:getLinearDamping()
-	particledump.particle['lineardamping'] = { pldmin=pldmin,pldmax=pldmax }
-	particledump.particle['spread'] = em:getSpread()
-	particledump.particle['relativerotation'] = em:hasRelativeRotation()
-	local ox,oy = em:getOffset()
-	particledump.particle['offset'] = { ox=ox,oy=oy }
+	local particle = {}
+	particle['buffersize'] = em:getBufferSize()
+	particle['direction'] = em:getDirection()
 	
-	particledump.particle['sizesrange'] = spsrange.value
-	particledump.particle['sizevariation'] = em:getSizeVariation()
-	particledump.particle['sizes'] = {}
+	local as,asx,asy = em:getAreaSpread()
+	particle['areaspread'] = { as=as, asx=asx, asy=asy }
+
+	particle['emissionrate'] = em:getEmissionRate()
+	particle['emitterlifetime'] = em:getEmitterLifetime()
+	local pttlmin,pttlmax = em:getParticleLifetime()
+	particle['particlelifetime'] = { pttlmin=pttlmin,pttlmax=pttlmax }
+	local elaxmin,elaymin,elaxmax,elaymax = em:getLinearAcceleration()
+	particle['linearacceleration'] = { elaxmin=elaxmin,elaymin=elaymin,elaxmax=elaxmax,elaymax=elaymax }
+	local praccmin,praccmax = em:getRadialAcceleration()
+	particle['radialacceleration'] = { praccmin=praccmin,praccmax=praccmax }
+	local protmin,protmax = em:getRotation()
+	particle['rotation'] = { protmin=protmin,protmax=protmax }
+	local ptgamin,ptgamax = em:getTangentialAcceleration()
+	particle['tangentialacceleration'] = { ptgamin=ptgamin,ptgamax=ptgamax }
+	local pspdmin,pspdmax = em:getSpeed()
+	particle['speed'] = { pspdmin=pspdmin,pspdmax=pspdmax }
+	local pspinmin,pspinmax = em:getSpin()
+	particle['spin'] = { pspinmin=pspinmin,pspinmax=pspinmax }
+	particle['spinvariation'] = em:getSpinVariation()
+	local pldmin,pldmax = em:getLinearDamping()
+	particle['lineardamping'] = { pldmin=pldmin,pldmax=pldmax }
+	particle['spread'] = em:getSpread()
+	particle['relativerotation'] = em:hasRelativeRotation()
+	local ox,oy = em:getOffset()
+	particle['offset'] = { ox=ox,oy=oy }
+	
+	particle['sizesrange'] = spsrange.value
+	particle['sizevariation'] = em:getSizeVariation()
+	particle['sizes'] = {}
 	for i=1,spsrange.value do
-		particledump.particle['sizes'][i]=szspins[i].value
+		particle['sizes'][i]=szspins[i].value
 	end
 	
-	particledump.particle['colorsrange'] = spcrange.value
-	particledump.particle['colors'] = {}
+	particle['colorsrange'] = spcrange.value
+	particle['colors'] = {}
 	for i=1,spcrange.value do
-		if not particledump.particle['colors'][i] then particledump.particle['colors'][i] = {} end
+		if not particle['colors'][i] then particle['colors'][i] = {} end
 		for j=1,4 do
-			particledump.particle['colors'][i][j]=rbclgr[i].color[j]
+			particle['colors'][i][j]=rbclgr[i].color[j]
 		end
 	end
 	
-	particledump.particle['quadsuse'] = gbtexman:getItem("GB_TM_Offset"):getItem("B_TM_Offset_CenterQuad").active
+	particle['quadsuse'] = gbtexman:getItem("GB_TM_Offset"):getItem("B_TM_Offset_CenterQuad").active
 	
-	particledump.particle['quads'] = {}
+	particle['quads'] = {}
 	if cbuseq.checked == true and #lbqlist.items>0 then
 		local texw,texh = em:getTexture():getWidth(),em:getTexture():getHeight()
 		for i=1,#lbqlist.items do 
-			if not particledump.particle['quads'][i] then particledump.particle['quads'][i] = {} end
-			particledump.particle['quads'][i]={ lbqlist.items[i],texw, texh }
+			if not particle['quads'][i] then particle['quads'][i] = {} end
+			particle['quads'][i]={ lbqlist.items[i],texw, texh }
 		end
 	end
 				
 	local lbtex = gbtexman:getItem("LB_TextureList")
-	particledump.particle['image'] = lbtex:getSelected()
-	particledump.particle['blendmode'] = lbbmode:getSelected()
-	particledump.particle['insertmode'] = em:getInsertMode()
+	particle['image'] = lbtex:getSelected()
+	particle['blendmode'] = lbbmode:getSelected()
+	particle['insertmode'] = em:getInsertMode()
 				
-	local dump = ndump(particledump)
+	local dump = ndump( {particle=particle} )
 				
 	local filename = "par_" .. string.format( "%s.txt", os.date("%m-%d_%H-%M-%S", os.time()) )
 	love.filesystem.write('saves/' .. filename, "local " .. dump .. "\nreturn particle\n" )
@@ -109,7 +111,32 @@ local function loadparticle( filename, uim, em, page )
 	em:setAreaSpread( particle["areaspread"]["as"], particle["areaspread"]["asx"], particle["areaspread"]["asy"])
 	local gb_distr = page:getItem("GB_AreaDistribution")
 	local rbdn = gb_distr:getItem("RB_Distr_None")
-	gb_distr:getItem("RB_Distr_None").group[rbdn:getGroupIndex()].caption = particle["areaspread"]["as"]
+	local rbdnorm = gb_distr:getItem("RB_Distr_Normal")
+	local rbdu = gb_distr:getItem("RB_Distr_Uniform")
+	print(rbdn.checked,rbdnorm.checked,rbdu.checked)
+	gb_distr:getItem("SP_Distr_X"):hide()
+	gb_distr:getItem("SP_Distr_Y"):hide()
+	if particle["areaspread"]["as"] == 'none' then
+		rbdn.checked = true
+		rbdnorm.checked = false
+		rbdu.checked = false
+	elseif particle["areaspread"]["as"] == 'normal' then
+		rbdn.checked = false
+		rbdnorm.checked = true
+		rbdu.checked = false
+		gb_distr:getItem("SP_Distr_X"):show()
+		gb_distr:getItem("SP_Distr_Y"):show()
+	elseif particle["areaspread"]["as"] == 'uniform' then
+		rbdn.checked = false
+		rbdnorm.checked = false
+		rbdu.checked = true
+		gb_distr:getItem("SP_Distr_X"):show()
+		gb_distr:getItem("SP_Distr_Y"):show()
+	else
+		rbdn.checked = true
+		rbdnorm.checked = false
+		rbdu.checked = false
+	end
 	gb_distr:getItem("SP_Distr_X").value = tonumber(particle["areaspread"]["asx"])
 	gb_distr:getItem("SP_Distr_Y").value = tonumber(particle["areaspread"]["asy"])
 
@@ -124,7 +151,6 @@ local function loadparticle( filename, uim, em, page )
 	gbplt:getItem("SP_PLifetime_Min").value = particle['particlelifetime'].pttlmin
 	gbplt:getItem("SP_PLifetime_Max").value = particle['particlelifetime'].pttlmax
 
-	----------------------------------------------------------------------
 	em:setParticleLifetime( particle['particlelifetime'].pttlmin, particle['particlelifetime'].pttlmax )
 	local gb_lacc = page:getItem("GB_LinearAcceleration")
 	gb_lacc:getItem("SP_LA_XMin").value = particle["linearacceleration"]["elaxmin"]
@@ -171,12 +197,14 @@ local function loadparticle( filename, uim, em, page )
 	em:setRelativeRotation( enable )
 	page:getItem("CB_RelativeRotation").checked = particle["relativerotation"]
 	
+	-- Offset
 	em:setOffset( particle["offset"]["ox"], particle["offset"]["oy"] )
 	local gbtexman = page:getItem("GB_Tex_Manager")
 	local gbtmoff = gbtexman:getItem("GB_TM_Offset")
 	gbtmoff:getItem("SP_TM_OffsetX").value = particle["offset"]["ox"]
 	gbtmoff:getItem("SP_TM_OffsetY").value = particle["offset"]["oy"]
 	
+	-- Sizes
 	local gbsizes = page:getItem("GB_Size_Selector")
 	gbsizes:getItem("SP_Size_Range").value = particle['sizesrange']
 	em:setSizeVariation( particle["sizevariation"] )
@@ -196,7 +224,7 @@ local function loadparticle( filename, uim, em, page )
 	end
 	em:setSizes( unpack(sizes) )
 	
-	-- colors
+	-- Colors
 	local gbcolors = page:getItem("GB_Color_Selector")
 	gbcolors:getItem("SP_Color_Range").value = particle["colorsrange"]
 	local clapp = {}
@@ -222,6 +250,20 @@ local function loadparticle( filename, uim, em, page )
 	end
 	em:setColors(unpack(clapp))
 
+	-- Texture
+	local gbtexman = page:getItem("GB_Tex_Manager")
+	local lbtex = gbtexman:getItem("LB_TextureList")
+	for i,v in ipairs(lbtex.items) do
+		if v == particle["image"] then
+			lbtex.index = i
+			break
+		end
+	end
+	local tex = uim:getItem("IC_Textures"):getItem(lbtex:getSelected())
+	em:setTexture( tex )
+	page:getItem("GB_Tex_Manager"):getItem("IM_TM_Texture"):setImage(uim:getItem("IC_Textures"):getItem(lbtex:getSelected()))
+	page:getItem("GB_Tex_Manager"):getItem("L_TextureCaption").caption = "Texture: "..lbtex:getSelected()..":"..tex:getWidth().."x"..tex:getHeight()
+
 	-- Quads
 	gbtexman:getItem("CB_TM_UseQuads").checked = particle['quadsuse']
 	if particle['quadsuse'] then
@@ -229,7 +271,6 @@ local function loadparticle( filename, uim, em, page )
 	else
 		gbtexman:getItem("GB_QuadControl"):hide()
 	end
-	
 	local gbqctrl = gbtexman:getItem("GB_QuadControl")
 	local lbqlist = gbqctrl:getItem("LB_TM_QuadList")
 	lbqlist:clear()
@@ -252,26 +293,32 @@ local function loadparticle( filename, uim, em, page )
 		page:getItem("C_Quads"):addItem( love.graphics.newQuad(qx,qy,qw,qh,texwidth,textheight) )
 		print('Quadcount:', #c_quads.items)
 	end
-	em:setQuads(unpack(c_quads.items))
-
-	-- texture
-	local gbtexman = page:getItem("GB_Tex_Manager")
-	local lbtex = gbtexman:getItem("LB_TextureList")
-	for i,v in ipairs(lbtex.items) do
-		if v == particle["image"] then
-			lbtex.index = i
-			break
-		end
+	if particle['quadsuse'] then
+		gbqctrl:getItem("SP_QViewport_W").value = particle["quads"]["1"]["2"]
+		gbqctrl:getItem("SP_QViewport_H").value = particle["quads"]["1"]["3"]
+	else
+		gbqctrl:getItem("SP_QViewport_W").value = tex:getWidth()
+		gbqctrl:getItem("SP_QViewport_H").value = tex:getHeight()
 	end
-	local tex = uim:getItem("IC_Textures"):getItem(lbtex:getSelected())
-	em:setTexture( tex )
-	page:getItem("GB_Tex_Manager"):getItem("IM_TM_Texture"):setImage(uim:getItem("IC_Textures"):getItem(lbtex:getSelected()))
-	page:getItem("GB_Tex_Manager"):getItem("L_TextureCaption").caption = "Texture: "..lbtex:getSelected()..":"..tex:getWidth().."x"..tex:getHeight()
+	em:setQuads(unpack(c_quads.items))
+	
+	-- update Texture Frame
+	local imgcross = gbtexman:getItem("CR_Cross")
+	local sox,soy,im = gbtmoff:getItem("SP_TM_OffsetX"),gbtmoff:getItem("SP_TM_OffsetY"),gbtexman:getItem("IM_TM_Texture")
+	imgcross:setPosition(im.x+sox.value,im.y+soy.value)
+	
+	local quadrect = gbtexman:getItem("R_QuadRect")
+	if particle['quadsuse'] then
+		local qx,qy,qw,qh = c_quads:getItem(1):getViewport()
+		quadrect:setPosition(im.x+qx, im.y+qy)
+		quadrect:setSize(qw,qh)
+	else
+		quadrect:setPosition(im.x, im.y)
+		quadrect:setSize(tex:getWidth(),tex:getHeight())
+	end
 
-	----------------------------------------------------------------------
-
+	-- insertMode
 	em:setInsertMode( particle['insertmode'] )
---[[
 	local gbimode = page:getItem("GB_InsertMode")
 	local rbimtop = gbimode:getItem("RB_IM_Top")
 	local rbimbot = gbimode:getItem("RB_IM_Bottom")
@@ -286,7 +333,7 @@ local function loadparticle( filename, uim, em, page )
 	elseif particle['insertmode'] == 'random' then
 		rbimrnd.checked = true
 	end
-]]--
+
 	-- blendmode
 	local gbmisc = page:getItem("GB_Misc")
 	local lbbmode = gbmisc:getItem("LB_BlendMode")
