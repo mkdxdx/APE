@@ -348,7 +348,7 @@ local function loadparticle( filename, uim, em, page )
 end
 
 function love.load()
-	love.window.setTitle("APE for LÖVE2D by cval")
+	love.window.setTitle("APE for LÖVE2D by cval; modified by SiENcE")
 	l_gfx.setFont(l_gfx.newFont(12))
 	uim = UIManager:new()
 	UIElement.colorFill = {48,48,48,255}
