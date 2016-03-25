@@ -469,7 +469,7 @@ function fillPage(page)
 	c_quads:addItem(love.graphics.newQuad(0,0,1,1,1,1))
 	
 	
-	local bsspin = page:addItem(Spin:new("SP_BufferSize"))
+	local bsspin = page:addItem(SpinEdit:new("SP_BufferSize"))
 	bsspin.caption = "Buffer:"
 	bsspin.leftCaption = true
 	bsspin:setPosition(56,8)

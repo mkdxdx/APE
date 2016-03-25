@@ -181,3 +181,84 @@ end
 
 function Spin:changeValue() end
 function Spin:setValue(value) self.value = value end
+
+
+-- Editable spin, once hovered over, receives text input
+SpinEdit = {}
+SpinEdit.__index = SpinEdit
+SpinEdit.ident = "ui_spinedit"
+SpinEdit.name = "SpinEdit"
+-- Yes, it does look crude, but i cannot use dot or comma as assoc.array key like arr = {. = '.'}
+local ac = {}
+ac['1'] = '1'
+ac['2'] = '2'
+ac['3'] = '3'
+ac['4'] = '4'
+ac['5'] = '5'
+ac['6'] = '6'
+ac['7'] = '7'
+ac['8'] = '8'
+ac['9'] = '9'
+ac['0'] = '0'
+ac['.'] = '.'
+ac[','] = '.'
+ac['kp1'] = '1'
+ac['kp2'] = '2'
+ac['kp2'] = '3'
+ac['kp3'] = '3'
+ac['kp4'] = '4'
+ac['kp5'] = '5'
+ac['kp6'] = '6'
+ac['kp7'] = '7'
+ac['kp8'] = '8'
+ac['kp9'] = '9'
+ac['kp0'] = '0'
+SpinEdit.allowedChars = ac
+function SpinEdit:new(name)
+	local self = setmetatable({},SpinEdit)
+	self.name = name or self.name
+	self.value = 0
+	self.step = 1
+	self.step_mult = 1
+	self.isHeld = false
+	self.allowMult = false
+	self.displMult = false
+	self.mult_coarse = 10
+	self.mult_base = 1
+	self.mult_precise = 0.1
+	self.mult_turbo = 100
+	self.held_timer = 0
+	self.max = nil
+	self.min = nil
+	return self
+end
+setmetatable(SpinEdit,{__index = Spin})
+
+function SpinEdit:keypressed(key) 
+	if self.allowMult == true then
+		if key == "lshift" then
+			self.step_mult = self.mult_coarse
+			self.displMult = true
+		elseif key == "lctrl" then
+			self.step_mult = self.mult_precise
+			self.displMult = true
+		elseif key == "lalt" then
+			self.step_mult = self.mult_turbo
+			self.displMult = true
+		end
+	end
+	if self:isMouseOver() == true then
+		local rk = self.allowedChars[key]
+		if rk ~= nil then
+			
+			
+		end
+	end
+end
+
+function SpinEdit:keyreleased(key) 
+	if key == "lshift" or key == "lctrl" or key == "lalt" then
+		self.step_mult = self.mult_base
+		self.displMult = false
+	end
+end
