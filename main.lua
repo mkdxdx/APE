@@ -94,6 +94,8 @@ local function saveparticle( em, spsrange, spcrange, szspins, rbclgr, cbuseq, gb
 	local dump = ndump( {particle=particle} )
 				
 	local filename = "par_" .. string.format( "%s.txt", os.date("%m-%d_%H-%M-%S", os.time()) )
+	
+	if not love.filesystem.exists('saves/') then love.filesystem.createDirectory('/saves/') end
 	love.filesystem.write('saves/' .. filename, "local " .. dump .. "\nreturn particle\n" )
 end
 
