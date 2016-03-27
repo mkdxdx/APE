@@ -94,6 +94,8 @@ local function saveparticle( em, spsrange, spcrange, szspins, rbclgr, cbuseq, gb
 	local dump = ndump( {particle=particle} )
 				
 	local filename = "par_" .. string.format( "%s.txt", os.date("%m-%d_%H-%M-%S", os.time()) )
+	
+	if not love.filesystem.exists('saves/') then love.filesystem.createDirectory('/saves/') end
 	love.filesystem.write('saves/' .. filename, "local " .. dump .. "\nreturn particle\n" )
 end
 
@@ -219,7 +221,6 @@ local function loadparticle( filename, uim, em, page )
 		else
 			spsz.value = 1.0
 			spsz.active = false
-			sizes[i] = 1.0
 		end
 	end
 	em:setSizes( unpack(sizes) )
@@ -345,6 +346,8 @@ local function loadparticle( filename, uim, em, page )
 			break
 		end
 	end
+	
+	page:getItem("ParticleEmitter").ps:start()
 end
 
 function love.load()
@@ -647,8 +650,9 @@ function fillPage(page)
 	spemlt.min = -1
 	spemlt.value = -1
 	spemlt.max = nil
+	spemlt.step = 0.1
 	spemlt.allowMult = true
-	function spemlt:changeValue() if spemlt.value<0 then spemlt.value = -1 end page:getItem("ParticleEmitter").ps:setEmitterLifetime(spemlt.value) page:getItem("ParticleEmitter").ps:start() end
+	function spemlt:changeValue() if spemlt.value<-1 then spemlt.value = -1 end page:getItem("ParticleEmitter").ps:setEmitterLifetime(spemlt.value) page:getItem("ParticleEmitter").ps:start() end
 	
 	
 	
