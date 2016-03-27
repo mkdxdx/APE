@@ -221,7 +221,6 @@ local function loadparticle( filename, uim, em, page )
 		else
 			spsz.value = 1.0
 			spsz.active = false
-			sizes[i] = 1.0
 		end
 	end
 	em:setSizes( unpack(sizes) )
